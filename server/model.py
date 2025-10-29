@@ -43,8 +43,8 @@ class User(flask_login.UserMixin, db.Model):
     def username(self):
         return self.name.lower().replace(" ", "") if self.name else ""
     
-    def get_post_count(self):
-        return len(self.posts)
+    # def get_post_count(self):
+    #     return len(self.posts)
     
     def get_follower_count(self):
         return len(self.followers)

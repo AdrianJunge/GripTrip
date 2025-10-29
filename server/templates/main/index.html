@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Traveler app</title>
+    <title>Home - {{ app_name }}</title>
 {% endblock %}
 
 {% block content %}
-<div class="main-content">
-    <h1>Welcome to Traveler!</h1>
-    <p>Your gateway to unforgettable travel experiences.</p>
-</div>
+<h1>Welcome to {{ app_name }}!</h1>
+<p>Your gateway to unforgettable travel experiences.</p>
 {% endblock %}

@@ -1,15 +1,10 @@
 {% extends 'base.html' %}
 
 {% block head %}
+    <title>{{ user.name }} - {{ app_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='profile/profile.css') }}">
-    <title>{{ user.name }} - Traveler</title>
 {% endblock %}
 
 {% block content %}
-<div class="main-content">
-    <main class="main-feed">
 
-    </main>
-
-</div>
 {% endblock %}

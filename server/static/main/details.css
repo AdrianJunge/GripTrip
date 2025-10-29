@@ -25,31 +25,3 @@
     color: #1da1f2;
     text-decoration: none;
 }
-
-.nav-links {
-    display: flex;
-    gap: 20px;
-}
-
-
-.stat {
-    display: flex;
-    gap: 5px;
-}
-
-.stat-number {
-    font-weight: bold;
-}
-
-.stat-label {
-    color: #657786;
-}
-
-.link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.link:hover {
-    text-decoration: none;
-}
