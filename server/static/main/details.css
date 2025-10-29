@@ -1,0 +1,55 @@
+.notification {
+    padding: 12px 16px;
+    margin: auto;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 50%;
+    text-align: center;
+}
+
+.notification.error {
+    background: #fed7d7;
+    color: #c53030;
+    border-left: 4px solid #e53e3e;
+}
+
+.notification.success {
+    background: #c6f6d5;
+    color: #2f855a;
+    border-left: 4px solid #38a169;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1da1f2;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
+
+
+.stat {
+    display: flex;
+    gap: 5px;
+}
+
+.stat-number {
+    font-weight: bold;
+}
+
+.stat-label {
+    color: #657786;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.link:hover {
+    text-decoration: none;
+}
