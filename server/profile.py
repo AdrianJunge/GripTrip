@@ -1,0 +1,49 @@
+from flask import Blueprint, render_template, redirect, url_for, flash
+from flask_login import current_user, login_required
+
+from . import db
+from . import model
+
+bp = Blueprint("profile", __name__)
+
+
+@bp.route("/profile", defaults={"user_id": None})
+@bp.route("/profile/<int:user_id>")
+@login_required
+def profile(user_id):
+    if user_id is None:
+        user_id = current_user.id
+    user = model.User.query.get_or_404(user_id)
+    return render_template("main/profile.html", user=user)
+
+
+@bp.route("/follow/<int:user_id>", methods=["POST"])
+@login_required
+def follow(user_id):
+    user_to_follow = model.User.query.get_or_404(user_id)
+    if user_to_follow.id == current_user.id:
+        flash("You cannot follow yourself.", "error")
+        return {"message": "Cannot follow yourself"}, 400
+    if user_to_follow in current_user.following:
+        flash("You are already following this user.", "error")
+        return {"message": "Already following"}, 400
+    user_to_follow.followers.append(current_user)
+    db.session.commit()
+    flash("You are now following this user.", "success")
+    return redirect(url_for("profile.profile", user_id=user_to_follow.id))
+
+
+@bp.route("/unfollow/<int:user_id>", methods=["POST"])
+@login_required
+def unfollow(user_id):
+    user_to_unfollow = model.User.query.get_or_404(user_id)
+    if user_to_unfollow.id == current_user.id:
+        flash("You cannot unfollow yourself.", "error")
+        return {"message": "Cannot unfollow yourself"}, 400
+    if user_to_unfollow not in current_user.following:
+        flash("You are not following this user.", "error")
+        return {"message": "Not following"}, 400
+    user_to_unfollow.followers.remove(current_user)
+    db.session.commit()
+    flash("You have unfollowed this user.", "success")
+    return redirect(url_for("profile.profile", user_id=user_to_unfollow.id))

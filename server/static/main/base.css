@@ -58,30 +58,6 @@ body {
     color: #888;
 }
 
-
-
-
-
-
-
-.sidebar {
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    border: 1px solid #e1e8ed;
-    height: fit-content;
-    position: sticky;
-    top: 20px;
-}
-
-.sidebar-left {
-    grid-column: 1;
-}
-
-.sidebar-right {
-    grid-column: 3;
-}
-
 .main-feed {
     grid-column: 2;
 }

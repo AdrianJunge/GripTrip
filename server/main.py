@@ -10,5 +10,5 @@ bp = Blueprint("main", __name__)
 @login_required
 def index():
     return render_template(
-        "main/base.html"
+        "main/index.html"
     )
