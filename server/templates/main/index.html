@@ -1,0 +1,74 @@
+{% extends 'main/base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='post/post.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile/profile.css') }}">
+    <title>Microblogging app</title>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <aside class="sidebar sidebar-left">
+        {% include 'profile/user.html' %}
+        <a href="/profile/{{ user.id }}" class="btn btn-outline-secondary">View Profile</a>
+    </aside>
+
+    <main class="main-feed">
+        <section class="create-post">
+
+            <div class="profile-top">
+                <a href="#" class="link">
+                    <div class="profile-avatar">{{ user.avatar }}</div>
+                </a>
+                <h2 class="section-title">What's happening?</h2>
+            </div>
+
+            <form class="create-post-form" action="{{ url_for('post.create') }}" method="post">
+                <div class="create-post-header">
+                    <textarea 
+                        name="content"
+                        class="post-textarea" 
+                        placeholder="What's on your mind?" 
+                        maxlength="280"
+                        oninput="updateCharacterCount(this)"
+                    ></textarea>
+                </div>
+                <div class="post-actions">
+                    <div class="character-count">
+                        <span id="char-count">0</span>/280
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post</button>
+                </div>
+            </form>
+        </section>
+
+        {% set caption = "Latest posts from the people you follow" %}
+        {% set posts = following_posts %}
+        {% include 'post/posts_template.html' %}
+
+        {% set caption = "Latest posts" %}
+        {% set posts = latest_posts %}
+        {% include 'post/posts_template.html' %}
+    </main>
+
+    <aside class="sidebar sidebar-right">
+        {% include 'profile/suggested_follows.html' %}
+    </aside>
+
+    <script>
+        function updateCharacterCount(textarea) {
+            const count = textarea.value.length;
+            document.getElementById('char-count').textContent = count;
+            
+            const countElement = document.getElementById('char-count');
+            if (count > 250) {
+                countElement.style.color = '#e0245e';
+            } else if (count > 200) {
+                countElement.style.color = '#f45d22';
+            } else {
+                countElement.style.color = '#657786';
+            }
+        }
+    </script>
+</div>
+{% endblock %}

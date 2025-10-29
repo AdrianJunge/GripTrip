@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth/auth.css') }}">
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            {% if message.category == 'error' %}
+                <div class="notification error">{{ message }}</div>
+            {% else %}
+                <div class="notification success">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+
+    <div class="login-form">
+        <h2 class="login-heading">Sign Up</h2>
+        <form class="login-details" action="{{ url_for('auth.signup') }}" method="post">
+            <div class="email-field"><input type="email" name="email" placeholder="Email" required/></div>
+            <div class="username-field"><input type="text" name="username" placeholder="Username" required/></div>
+            <div class="password-field"><input type="password" name="password" placeholder="Password" required/></div>
+            <div class="password-field"><input type="password" name="password_repeat" placeholder="Repeat Password" required/></div>
+            <div class="login-button"><input type="submit" value="Sign Up"/></div>
+        </form>
+        <p class="signup-prompt">Already signed up? <a href="{{ url_for('auth.login') }}">Log In</a></p>
+    </div>
+{% endblock %}

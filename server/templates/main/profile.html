@@ -1,0 +1,36 @@
+{% extends 'main/base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='post/post.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile/profile.css') }}">
+    <title>{{ user.name }} - Microblogger</title>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <aside class="sidebar sidebar-left">
+        {% include 'profile/user.html' %}
+        <div class="profile-actions">
+                {% if user.id != current_user.id %}
+                    {% include 'profile/follow.html' %}
+                    <button class="btn btn-outline-secondary" onclick="alert('Message functionality not implemented yet')">Message</button>
+                {% endif %}
+                <a href="/" class="btn btn-outline-secondary">← Home</a>
+            </div>
+    </aside>
+
+    <main class="main-feed">
+
+        <section class="posts-section">
+            <h2 class="section-title">Posts by {{ user.name }}</h2>
+            {% for post in posts %}
+                {% include 'post/post_template.html' %}
+            {% endfor %}
+        </section>
+    </main>
+
+    <aside class="sidebar sidebar-right">
+        {% include 'profile/similar_profiles.html' %}
+    </aside>
+</div>
+{% endblock %}
