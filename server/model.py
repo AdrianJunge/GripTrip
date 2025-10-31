@@ -54,3 +54,31 @@ class User(flask_login.UserMixin, db.Model):
 
     def is_following(self, user):
         return user in self.following
+
+# class Post(db.Model):
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship(back_populates="posts")
+#     caption: Mapped[Optional[str]] = mapped_column(String(512), default="")
+#     timestamp: Mapped[datetime.datetime] = mapped_column(
+#         DateTime(timezone=True), server_default=func.now()
+#     )
+
+# class Message(db.Model):
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+#     user: Mapped["User"] = relationship()
+#     content: Mapped[str] = mapped_column(String(1024))
+#     timestamp: Mapped[datetime.datetime] = mapped_column(
+#         DateTime(timezone=True), server_default=func.now()
+#     )
+#     response_to_id: Mapped[Optional[int]] = mapped_column(ForeignKey("post.id"))
+#     response_to: Mapped["Post"] = relationship(
+#         back_populates="responses", remote_side=[id]
+#     )
+#     responses: Mapped[List["Post"]] = relationship(
+#         back_populates="response_to", remote_side=[response_to_id]
+#     )
+
+#     def get_num_replies(self):
+#         return len(self.responses)
