@@ -1,4 +1,6 @@
 # General
+- [ ] Ask Josue how you are supposed to do the statement if you use e.g. github copilot
+    - memorize/write down every single line/part of the code that was completed by copilot?
 - [x] Decide specialized travel app
     => ski trips
 - [ ] Which special attributes might be needed for Skiing??
