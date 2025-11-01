@@ -10,28 +10,19 @@
     
 # Mandatory functionality
 - [ ] managing user accounts
-    - [ ] users can create accounts
-    - [ ] users can log into their accounts
-    - [ ] users can logout
-    - [ ] all controllers/views only accessible by authenticated users
-        - [ ] exception is the landing page and ressources needed to create accounts and login
+    - [x] users can create accounts
+    - [x] users can log into their accounts
+    - [x] users can logout
+    - [ ] all controllers/views only accessible by authenticated users (test this one in the very end)
+        - [x] exception is the landing page and ressources needed to create accounts and login
 - [ ] displaying and editing user profiles
-    - [ ] users can create accounts
     - [ ] users can edit a short description/bio of themselves
     - [ ] other users can read the bio
-    - [ ] every ention to a user in the application must link to their profile view
+    - [ ] every mention to a user in the application must link to their profile view
 - [ ] creating trip proposals
     - [ ] users can create new trip proposals => they become a participant of it and have editing permissions
         - [ ] maximum number of participants has to be set by creation
         - [ ] specify tentative information about trip (not everything has to be set immediately)
-            - departure locations
-            - destination
-            - dates
-            - budget
-            - types of activities to be done
-            - accomodation
-            - trip duration
-            etc
     - [ ] users can specify information (departure etc - what special information for skiing? maybe smth like skill level required, blue/red/black routes)
     - [ ] users can edit "not final" information (trip dates can be provided as a range of possible dates and durations e.g. from 6 to 9 days between June 1st and July 31st, blank destination or list of possible destinations)
     - [ ] users must specify a maximum number of participants at creation time - might be adjustable
@@ -82,67 +73,39 @@
 
 
 # Models
-- [ ] Users
-    - [ ] email address
-    - [ ] password (salted, encrypted)
-    - [ ] bio/description about themselves
-- [ ] Trip proposals
-    - [ ] current information...
-    - [ ] max number of participants
-    - [ ] current status (open, closed etc)
-        => use enumarated data types
-            ```
-            import enum
-
-            (...)
-
-            class ProposalStatus(enum.Enum):
-                open = 1
-                closed_to_new_participants = 2
-                finalized = 3
-                cancelled = 4
-
-            # Use the enumerated type in the model
-            class DateProposal(db.Model):
-                (...)
-                status: Mapped["ProposalStatus"]
-                (...)
-            The syntax to access these columns in your model objects is as follows:
-
-            Copy code icon
-            # Create a new instance of a date proposal
-            proposal = model.TripProposal(
-                (...)
-                status=model.TripProposal.open,
-                (...)
-            )
-
-            (...)
-
-            # Check the status of a proposal
-            if proposal.status == model.TripProposal.closed_to_new_participants:
-                (...)
-
-            {% if proposal.status == proposal.status.__class__.finalized %}
-            ```
-    - [ ] every detail (departure etc) has boolean field indicating whether its final or not
-- [ ] Messages
-    - [ ] text
-    - [ ] timestamp
-    - [ ] user who posted them (many to one relationship with users)
-    - [ ] trip proposal they belong to (many to one relationship)
-- [ ] Trip proposal participation (many to many relationship)
-    - [ ] participants who have editing permissions or not (explicit entity for this relationship needed)
-        - [ ] entity should contain
-            - [ ] permissions (editing or not)
-            - [ ] user that is participating and editor (many to one relationship)
-            - [ ] trip proposal the editors are participating in (many to one relationship)
-- [ ] Meetups
-    - [ ] date
-    - [ ] time
-    - [ ] location
-    - [ ] trip proposal they belong to (many to one relationship)
-    - [ ] user that created it (many to one relationship)
+- [x] Users
+    - [x] email address
+    - [x] password (salted, encrypted)
+    - [x] bio/description about themselves
+- [x] Trip proposals
+    - [x] current information...
+            - departure locations
+            - destination
+            - dates
+            - budget
+            - types of activities to be done
+            - accomodation
+            - trip duration
+    - [x] max number of participants
+    - [x] current status (open, closed etc)
+    - [x] every detail (departure etc) has boolean field indicating whether its final or not
+- [x] Messages
+    - [x] text
+    - [x] timestamp
+    - [x] user who posted them (many to one relationship with users)
+    - [x] trip proposal they belong to (many to one relationship)
+- [x] Trip proposal participation (many to many relationship)
+    - [x] participants who have editing permissions or not (explicit entity for this relationship needed)
+        - [x] entity should contain
+            - [x] permissions (editing or not)
+            - [x] user that is participating and editor (many to one relationship)
+            - [x] trip proposal the editors are participating in (many to one relationship)
+- [x] Meetups
+    - [x] date
+    - [x] time
+    - [x] location
+    - [x] trip proposal they belong to (many to one relationship)
+    - [x] user that created it (many to one relationship)
 
 
 # Additional functionality

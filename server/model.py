@@ -1,10 +1,13 @@
 import datetime
-from typing import List, Optional
+import enum
+from typing import List, Optional, Tuple
 import flask_login
-
-from sqlalchemy import String, DateTime, ForeignKey, Table, Column, Integer
+from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Boolean, String, DateTime, ForeignKey, Table, Column, Integer, Tuple
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
+from sqlalchemy.orm import validates
 
 from . import db
 
@@ -15,9 +18,9 @@ class FollowingAssociation(db.Model):
 class User(flask_login.UserMixin, db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     email: Mapped[str] = mapped_column(String(128), unique=True)
-    name: Mapped[str] = mapped_column(String(64))
+    username: Mapped[str] = mapped_column(String(64), unique=True)
     password: Mapped[str] = mapped_column(String(256))
-    # posts: Mapped[List["Post"]] = relationship(back_populates="user")
+    proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
@@ -38,47 +41,105 @@ class User(flask_login.UserMixin, db.Model):
         if len(name_parts) > 1:
             return name_parts[0][0].upper() + name_parts[-1][0].upper()
         return self.name[0].upper() if self.name else "?"
-    
-    @property
-    def username(self):
-        return self.name.lower().replace(" ", "") if self.name else ""
-    
-    # def get_post_count(self):
-    #     return len(self.posts)
-    
-    def get_follower_count(self):
-        return len(self.followers)
-    
-    def get_following_count(self):
-        return len(self.following)
 
-    def is_following(self, user):
-        return user in self.following
+class ProposalStatus(enum.Enum):
+    OPEN = 1
+    CLOSED_TO_NEW = 2
+    FINALIZED = 3
+    CANCELLED = 4
 
-# class Post(db.Model):
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-#     user: Mapped["User"] = relationship(back_populates="posts")
-#     caption: Mapped[Optional[str]] = mapped_column(String(512), default="")
-#     timestamp: Mapped[datetime.datetime] = mapped_column(
-#         DateTime(timezone=True), server_default=func.now()
-#     )
+class FinalizedError(Exception):
+    pass
 
-# class Message(db.Model):
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-#     user: Mapped["User"] = relationship()
-#     content: Mapped[str] = mapped_column(String(1024))
-#     timestamp: Mapped[datetime.datetime] = mapped_column(
-#         DateTime(timezone=True), server_default=func.now()
-#     )
-#     response_to_id: Mapped[Optional[int]] = mapped_column(ForeignKey("post.id"))
-#     response_to: Mapped["Post"] = relationship(
-#         back_populates="responses", remote_side=[id]
-#     )
-#     responses: Mapped[List["Post"]] = relationship(
-#         back_populates="response_to", remote_side=[response_to_id]
-#     )
+class Proposal(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user: Mapped["User"] = relationship(back_populates="proposals")
+    title: Mapped[Optional[str]] = mapped_column(String(512), default="")
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    status: Mapped[ProposalStatus] = mapped_column(enum.Enum(ProposalStatus), default=ProposalStatus.OPEN)
+    max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1, required=True)
+    messages: Mapped[List["Message"]] = relationship(back_populates="proposal")
+    participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
-#     def get_num_replies(self):
-#         return len(self.responses)
+    dates: Mapped[Optional[List[Tuple[datetime.datetime, datetime.datetime]]]] = mapped_column(String(256), default=None)
+    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None)
+    budget: Mapped[Optional[float]] = mapped_column(String(256), default=None)
+    accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None)
+    transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None)
+    activities: Mapped[Optional[str]] = mapped_column(String(256), default=None)
+    departure_locations: Mapped[Optional[List[str]]] = mapped_column(String(256), default=None)
+    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None)
+    destinations: Mapped[Optional[List[str]]] = mapped_column(String(256), default=None)
+
+    finalized_flags: Mapped[dict] = mapped_column(
+        MutableDict.as_mutable(JSONB),
+        default=lambda: {}
+    )
+
+    def is_final(self, field_name: str) -> bool:
+        return bool(self.finalized_flags.get(field_name, False))
+
+    def finalize(self, field_name: str, by_user: Optional[int] = None):
+        self.finalized_flags[field_name] = {
+            "final": True,
+            "at": datetime.datetime.now(datetime.timezone.utc)
+        }
+
+    def unfinalize(self, field_name: str):
+        self.finalized_flags.pop(field_name, None)
+
+    @validates("dates", "final_date", "budget", "accommodation", "transportation", "activities", "departure_locations", "final_departure_location", "destinations")
+    def _validate_not_final(self, key, value):
+        if self.is_final(key):
+            raise FinalizedError(f"Field '{key}' is finalized and cannot be modified.")
+        return value
+
+
+class Message(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    content: Mapped[str] = mapped_column(String(1024))
+    timestamp: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
+    proposal: Mapped["Proposal"] = relationship(back_populates="messages")
+    responses: Mapped[List["Message"]] = relationship(
+        back_populates="response_to", remote_side=[id]
+    )
+    response_to_id: Mapped[Optional[int]] = mapped_column(ForeignKey("message.id"))
+    response_to: Mapped[Optional["Message"]] = relationship(
+        back_populates="responses", remote_side=[id]
+    )
+
+class ProposalParticipantRole(enum.Enum):
+    ADMIN = 1
+    EDITOR = 2
+    VIEWER = 3
+
+class ProposalParticipant(db.Model):
+    proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    proposal: Mapped["Proposal"] = relationship(back_populates="participants")
+    user: Mapped["User"] = relationship()
+    joined_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    permission: Mapped[ProposalParticipantRole] = mapped_column(enum.Enum(ProposalParticipantRole), default=ProposalParticipantRole.VIEWER)
+
+class Meetup(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
+    proposal: Mapped["Proposal"] = relationship()
+    location: Mapped[str] = mapped_column(String(256))
+    time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
+    description: Mapped[Optional[str]] = mapped_column(String(512), default="")
+    participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="meetup")
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    created_by_user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    created_by_user: Mapped["User"] = relationship()

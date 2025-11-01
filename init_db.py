@@ -23,7 +23,7 @@ def init_database():
         print("Created tables successfully!")
         
         mary = User(
-            email="a@a.a",
+            email="a@a",
             name="A A",
             password=generate_password_hash("a")
         )
