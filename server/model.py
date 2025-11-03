@@ -68,14 +68,15 @@ class Proposal(db.Model):
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
     # Trip details - optional/tentative
-    dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     budget: Mapped[Optional[float]] = mapped_column(Float, default=None, nullable=True)
     accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
     transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
-    activities: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
-    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+
+    dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
+    activities: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
 
     finalized_flags: Mapped[dict] = mapped_column(

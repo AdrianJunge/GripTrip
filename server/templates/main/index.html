@@ -33,7 +33,7 @@
                         <span>{{ start }} - {{ end }}</span>{% if not loop.last %}, {% endif %}
                     {% endfor %}
                 </p>
-                <p class="trip-meta">By {{ trip.user.username if trip.user else 'Unknown' }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
+                <p>By {{ trip.user.username if trip.user else 'Unknown' }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
             </div>
         </a>
         {% endfor %}

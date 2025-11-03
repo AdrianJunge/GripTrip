@@ -26,8 +26,11 @@
         - [x] maximum number of participants has to be set by creation
         - [x] specify tentative information about trip (not everything has to be set immediately)
     - [x] users can specify information (departure etc - what special information for skiing? maybe smth like skill level required, blue/red/black routes)
+    - [x] users must specify a maximum number of participants at creation time - might be adjustable
     - [ ] users can edit "not final" information (trip dates can be provided as a range of possible dates and durations e.g. from 6 to 9 days between June 1st and July 31st, blank destination or list of possible destinations)
-    - [ ] users must specify a maximum number of participants at creation time - might be adjustable
+    - [ ] view trip alle details anzeigen inklusive "final" vs "not final"
+    - [ ] check validity of given attributes
+        - e.g. end-date > start-date, budget is float etc
 
 - [ ] browsing, joining and leaving trip proposals
     - [ ] users can see list of trip proposals (from other users and still accepting new participants)

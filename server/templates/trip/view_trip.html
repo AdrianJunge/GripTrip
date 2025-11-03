@@ -2,35 +2,71 @@
 
 {% block head %}
     <title>View Trip - {{ app_name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='trip/view_trip.css') }}">
 {% endblock %}
 
 {% block content %}
-<a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}"
-    class="btn btn-primary mb-3">Edit Trip</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">{{ trip.title or trip.name }}</h1>
+        <div>
+            <a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" class="btn btn-primary">Edit Trip</a>
+        </div>
+    </div>
 
-<h1>{{ trip.name }}</h1>
-<p>Participants: {{ trip.participants|length }} / {{ trip.max_participants }}</p>
-<p>Destinations: 
-    {% for destination in trip.destinations %}
-        <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
-    {% endfor %}
-</p>
-<p>Dates: 
-    {% for start, end in trip.dates %}
-        <span>{{ start }} - {{ end }}</span>
-        {% if not loop.last %}, {% endif %}
-    {% endfor %}
-</p>
-<p>Created by: {{ trip.user.username }}</p>
-<h2>Participants</h2>
-<ul>
-    {% if trip.participants %}
-        {% for participant in trip.participants %}
-            <li>{{ participant.user.username if participant.user else 'Unknown' }}</li>
-        {% endfor %}
-    {% else %}
-        <li>No participants yet.</li>
-    {% endif %}
-</ul>
+    <div class="mb-3">
+        <p class="mb-1">Participants: <strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></p>
+        <p class="mb-1">Created by: <strong>{{ trip.user.username }}</strong></p>
+    </div>
+
+    <div class="mb-3">
+        <h5>Destinations</h5>
+        <div>
+            {% if trip.destinations %}
+                {% for destination in trip.destinations %}
+                    <span class="badge bg-secondary">{{ destination }}</span>
+                {% endfor %}
+            {% else %}
+                <div class="text-muted">No destinations</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <h5>Dates</h5>
+        <div>
+            {% if trip.dates %}
+                {% for pair in trip.dates %}
+                    {% set start = pair[0] %}
+                    {% set end = pair[1] %}
+                    <span class="badge bg-secondary">{{ start }} → {{ end }}</span>
+                {% endfor %}
+            {% else %}
+                <div class="text-muted">No dates</div>
+            {% endif %}
+        </div>
+        
+    </div>
+
+    <div class="mb-3">
+        <h5>Activities</h5>
+        <div>
+            {% if trip.activities %}
+                {% for a in trip.activities %}
+                    <span class="badge bg-secondary">{{ a }}</span>
+                {% endfor %}
+            {% else %}
+                <div class="text-muted">No activities</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <h2>Participants</h2>
+    <ul>
+        {% if trip.participants %}
+            {% for participant in trip.participants %}
+                <li>{{ participant.user.username if participant.user else 'Unknown' }}</li>
+            {% endfor %}
+        {% else %}
+            <li class="text-muted">No participants yet.</li>
+        {% endif %}
+    </ul>
 {% endblock %}

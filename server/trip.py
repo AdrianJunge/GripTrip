@@ -7,38 +7,46 @@ import json
 
 bp = Blueprint("trip", __name__)
 
+def set_details_from_request(trip_proposal):
+    destinations = json.loads(request.form.get("destination")) if request.form.get("destination") else []
+    activities = json.loads(request.form.get("activity")) if request.form.get("activity") else []
+    departure_locations = json.loads(request.form.get("departure_location")) if request.form.get("departure_location") else []
+
+    start_dates = request.form.getlist("start_date") or []
+    end_dates = request.form.getlist("end_date") or []
+    dates = list(zip(start_dates, end_dates))
+
+    budget_raw = float(request.form.get("budget")) if request.form.get("budget") else None
+    accommodation = request.form.get("accommodation") or None
+    transportation = request.form.get("transportation") or None
+
+    trip_proposal.destinations = destinations
+    trip_proposal.budget = budget_raw
+    trip_proposal.accommodation = accommodation
+    trip_proposal.transportation = transportation
+    trip_proposal.activities = activities
+    trip_proposal.departure_locations = departure_locations
+    trip_proposal.dates = dates
+
 @bp.route("/trip/create", methods=["GET", "POST"])
 @login_required
 def create_trip():
     if request.method == "POST":
         trip_name = request.form.get("trip_name")
-        destination = request.form.get("destination")
-        start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
         max_participants = request.form.get("max_participants")
 
-        budget = request.form.get("budget")
-        accommodation = request.form.get("accommodation")
-        transportation = request.form.get("transportation")
-        activities = request.form.get("activities")
-        departure_location = request.form.get("departure_location")
-
-        if not trip_name or not destination or not start_date or not end_date:
-            flash("All fields are required.", "error")
+        if not trip_name or not max_participants:
+            flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.create_trip"))
 
         new_trip = model.Proposal(
             user_id=current_user.id,
             title=trip_name,
-            dates=[(start_date, end_date)],
-            destinations=[destination],
             max_participants=int(max_participants) if max_participants else 1,
-            budget=budget,
-            accommodation=accommodation,
-            transportation=transportation,
-            activities=activities,
-            departure_locations=[departure_location] if departure_location is not None else [],
         )
+
+        set_details_from_request(new_trip)
+
         participant = model.ProposalParticipant(
             user_id=current_user.id,
             proposal_id=new_trip.id,
@@ -64,10 +72,17 @@ def edit_trip(trip_id):
         return redirect(url_for("main.index"))
 
     if request.method == "POST":
-        trip.title = request.form.get("trip_name")
-        trip.destinations = request.form.getlist("destination")
-        trip.dates = [(request.form.get("start_date"), request.form.get("end_date"))]
-        trip.max_participants = int(request.form.get("max_participants"))
+        trip_name = request.form.get("trip_name")
+        max_participants = request.form.get("max_participants")
+
+        if not trip_name or not max_participants:
+            flash("Mandatory fields are missing", "error")
+            return redirect(url_for("trip.create_trip"))
+
+        trip.title = trip_name
+        trip.max_participants = int(max_participants)
+
+        set_details_from_request(trip)
 
         db.session.commit()
         return redirect(url_for("trip.view_trip", trip_id=trip.id))
