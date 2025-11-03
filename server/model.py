@@ -52,18 +52,22 @@ class FinalizedError(Exception):
     pass
 
 class Proposal(db.Model):
+    # Basic info - mandatory
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     user: Mapped["User"] = relationship(back_populates="proposals")
-    title: Mapped[Optional[str]] = mapped_column(String(512), default="")
+    title: Mapped[Optional[str]] = mapped_column(String(512), default="", nullable=False)
     timestamp: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
     status: Mapped[ProposalStatus] = mapped_column(SQLAlchemyEnum(ProposalStatus), default=ProposalStatus.OPEN)
     max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1, nullable=False)
+
+    # Relationships
     messages: Mapped[List["Message"]] = relationship(back_populates="proposal")
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
+    # Trip details - optional/tentative
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     budget: Mapped[Optional[float]] = mapped_column(Float, default=None, nullable=True)

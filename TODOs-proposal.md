@@ -9,11 +9,11 @@
 
     
 # Mandatory functionality
-- [ ] managing user accounts
+- [x] managing user accounts
     - [x] users can create accounts
     - [x] users can log into their accounts
     - [x] users can logout
-    - [ ] all controllers/views only accessible by authenticated users (test this one in the very end)
+    - [x] all controllers/views only accessible by authenticated users (test this one in the very end)
         - [x] exception is the landing page and ressources needed to create accounts and login
 
 - [ ] displaying and editing user profiles
@@ -25,10 +25,9 @@
     - [x] users can create new trip proposals => they become a participant of it and have editing permissions
         - [x] maximum number of participants has to be set by creation
         - [x] specify tentative information about trip (not everything has to be set immediately)
-    - [ ] users can specify information (departure etc - what special information for skiing? maybe smth like skill level required, blue/red/black routes)
+    - [x] users can specify information (departure etc - what special information for skiing? maybe smth like skill level required, blue/red/black routes)
     - [ ] users can edit "not final" information (trip dates can be provided as a range of possible dates and durations e.g. from 6 to 9 days between June 1st and July 31st, blank destination or list of possible destinations)
     - [ ] users must specify a maximum number of participants at creation time - might be adjustable
-
 
 - [ ] browsing, joining and leaving trip proposals
     - [ ] users can see list of trip proposals (from other users and still accepting new participants)
