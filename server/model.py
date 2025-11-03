@@ -1,10 +1,10 @@
 import datetime
+from sqlalchemy import Enum as SQLAlchemyEnum
 import enum
 from typing import List, Optional, Tuple
 import flask_login
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy import Boolean, String, DateTime, ForeignKey, Table, Column, Integer, Tuple
+from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
@@ -37,10 +37,10 @@ class User(flask_login.UserMixin, db.Model):
 
     @property
     def avatar(self):
-        name_parts = self.name.split()
-        if len(name_parts) > 1:
-            return name_parts[0][0].upper() + name_parts[-1][0].upper()
-        return self.name[0].upper() if self.name else "?"
+        username_parts = self.username.split()
+        if len(username_parts) > 1:
+            return username_parts[0][0].upper() + username_parts[-1][0].upper()
+        return self.username[0].upper() if self.username else "?"
 
 class ProposalStatus(enum.Enum):
     OPEN = 1
@@ -59,8 +59,8 @@ class Proposal(db.Model):
     timestamp: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    status: Mapped[ProposalStatus] = mapped_column(enum.Enum(ProposalStatus), default=ProposalStatus.OPEN)
-    max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1, required=True)
+    status: Mapped[ProposalStatus] = mapped_column(SQLAlchemyEnum(ProposalStatus), default=ProposalStatus.OPEN)
+    max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1)
     messages: Mapped[List["Message"]] = relationship(back_populates="proposal")
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
@@ -75,7 +75,7 @@ class Proposal(db.Model):
     destinations: Mapped[Optional[List[str]]] = mapped_column(String(256), default=None)
 
     finalized_flags: Mapped[dict] = mapped_column(
-        MutableDict.as_mutable(JSONB),
+        MutableDict.as_mutable(JSON),
         default=lambda: {}
     )
 
@@ -107,12 +107,12 @@ class Message(db.Model):
     )
     proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
     proposal: Mapped["Proposal"] = relationship(back_populates="messages")
-    responses: Mapped[List["Message"]] = relationship(
-        back_populates="response_to", remote_side=[id]
-    )
     response_to_id: Mapped[Optional[int]] = mapped_column(ForeignKey("message.id"))
     response_to: Mapped[Optional["Message"]] = relationship(
         back_populates="responses", remote_side=[id]
+    )
+    responses: Mapped[List["Message"]] = relationship(
+        back_populates="response_to"
     )
 
 class ProposalParticipantRole(enum.Enum):
@@ -128,7 +128,7 @@ class ProposalParticipant(db.Model):
     joined_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    permission: Mapped[ProposalParticipantRole] = mapped_column(enum.Enum(ProposalParticipantRole), default=ProposalParticipantRole.VIEWER)
+    permission: Mapped[ProposalParticipantRole] = mapped_column(SQLAlchemyEnum(ProposalParticipantRole), default=ProposalParticipantRole.VIEWER)
 
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -137,9 +137,15 @@ class Meetup(db.Model):
     location: Mapped[str] = mapped_column(String(256))
     time: Mapped[datetime.datetime] = mapped_column(DateTime(timezone=True))
     description: Mapped[Optional[str]] = mapped_column(String(512), default="")
-    participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="meetup")
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
     created_by_user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_by_user: Mapped["User"] = relationship()
+    participants: Mapped[List["MeetupParticipant"]] = relationship(back_populates="meetup")
+
+class MeetupParticipant(db.Model):
+    meetup_id: Mapped[int] = mapped_column(ForeignKey("meetup.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
+    meetup: Mapped["Meetup"] = relationship(back_populates="participants")
+    user: Mapped["User"] = relationship()

@@ -24,7 +24,7 @@ def init_database():
         
         mary = User(
             email="a@a",
-            name="A A",
+            username="testuser",
             password=generate_password_hash("a")
         )
         
