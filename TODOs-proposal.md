@@ -15,21 +15,27 @@
     - [x] users can logout
     - [ ] all controllers/views only accessible by authenticated users (test this one in the very end)
         - [x] exception is the landing page and ressources needed to create accounts and login
+
 - [ ] displaying and editing user profiles
     - [ ] users can edit a short description/bio of themselves
     - [ ] other users can read the bio
     - [ ] every mention to a user in the application must link to their profile view
+
 - [ ] creating trip proposals
-    - [ ] users can create new trip proposals => they become a participant of it and have editing permissions
-        - [ ] maximum number of participants has to be set by creation
-        - [ ] specify tentative information about trip (not everything has to be set immediately)
+    - [x] users can create new trip proposals => they become a participant of it and have editing permissions
+        - [x] maximum number of participants has to be set by creation
+        - [x] specify tentative information about trip (not everything has to be set immediately)
     - [ ] users can specify information (departure etc - what special information for skiing? maybe smth like skill level required, blue/red/black routes)
     - [ ] users can edit "not final" information (trip dates can be provided as a range of possible dates and durations e.g. from 6 to 9 days between June 1st and July 31st, blank destination or list of possible destinations)
     - [ ] users must specify a maximum number of participants at creation time - might be adjustable
+
+
 - [ ] browsing, joining and leaving trip proposals
     - [ ] users can see list of trip proposals (from other users and still accepting new participants)
         - [ ] with current details and number of participants joined vs max participants allowed
     - [ ] users can join trips if possible => they become a participant of it
+
+# Rest of mandatory functionality
 - [ ] displaying and editing trip proposal details
     - [ ] participants can see all details including the list of participants => central view of a trip proposal
     - [ ] particpants with editing permissions can edit details

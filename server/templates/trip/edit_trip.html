@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Edit Trip - {{ app_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trip/create_trip.css') }}">
+{% endblock %}
+
+{% block content %}
+<h1>Edit Trip</h1>
+<form method="POST" action="{{ url_for('trip.edit_trip', trip_id=trip.id) }}">
+    <div class="mb-3">
+        <label for="tripName" class="form-label">Trip Name</label>
+        <input type="text" class="form-control" id="tripName" name="trip_name" value="{{ trip.title }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="maxParticipants" class="form-label">Maximum Participants</label>
+        <input type="number" class="form-control" id="maxParticipants" name="max_participants" min="1" value="{{ trip.max_participants }}">
+    </div>
+    <div class="mb-3">
+        <label for="destination" class="form-label">Destination</label>
+        <input type="text" class="form-control" id="destination" name="destination" value="{{ trip.destinations }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" class="form-control" id="startDate" name="start_date" value="{{ trip.dates[0][0] }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="endDate" class="form-label">End Date</label>
+        <input type="date" class="form-control" id="endDate" name="end_date" value="{{ trip.dates[0][1] }}" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Edit Trip</button>
+</form>
+{% endblock %}

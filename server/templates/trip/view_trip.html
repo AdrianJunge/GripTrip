@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>View Trip - {{ app_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trip/view_trip.css') }}">
+{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}"
+    class="btn btn-primary mb-3">Edit Trip</a>
+
+<h1>{{ trip.name }}</h1>
+<p>Participants: {{ trip.participants|length }} / {{ trip.max_participants }}</p>
+<p>Destinations: 
+    {% for destination in trip.destinations %}
+        <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<p>Dates: 
+    {% for start, end in trip.dates %}
+        <span>{{ start }} - {{ end }}</span>
+        {% if not loop.last %}, {% endif %}
+    {% endfor %}
+</p>
+<p>Created by: {{ trip.user.username }}</p>
+<h2>Participants</h2>
+<ul>
+    {% if trip.participants %}
+        {% for participant in trip.participants %}
+            <li>{{ participant.user.username if participant.user else 'Unknown' }}</li>
+        {% endfor %}
+    {% else %}
+        <li>No participants yet.</li>
+    {% endif %}
+</ul>
+{% endblock %}

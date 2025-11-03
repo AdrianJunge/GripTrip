@@ -4,7 +4,7 @@ import enum
 from typing import List, Optional, Tuple
 import flask_login
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON
+from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
@@ -60,19 +60,19 @@ class Proposal(db.Model):
         DateTime(timezone=True), server_default=func.now()
     )
     status: Mapped[ProposalStatus] = mapped_column(SQLAlchemyEnum(ProposalStatus), default=ProposalStatus.OPEN)
-    max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1)
+    max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1, nullable=False)
     messages: Mapped[List["Message"]] = relationship(back_populates="proposal")
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
-    dates: Mapped[Optional[List[Tuple[datetime.datetime, datetime.datetime]]]] = mapped_column(String(256), default=None)
-    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None)
-    budget: Mapped[Optional[float]] = mapped_column(String(256), default=None)
-    accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None)
-    transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None)
-    activities: Mapped[Optional[str]] = mapped_column(String(256), default=None)
-    departure_locations: Mapped[Optional[List[str]]] = mapped_column(String(256), default=None)
-    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None)
-    destinations: Mapped[Optional[List[str]]] = mapped_column(String(256), default=None)
+    dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
+    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
+    budget: Mapped[Optional[float]] = mapped_column(Float, default=None, nullable=True)
+    accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+    transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+    activities: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+    destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
 
     finalized_flags: Mapped[dict] = mapped_column(
         MutableDict.as_mutable(JSON),
@@ -80,6 +80,8 @@ class Proposal(db.Model):
     )
 
     def is_final(self, field_name: str) -> bool:
+        if self.finalized_flags is None:
+            return False
         return bool(self.finalized_flags.get(field_name, False))
 
     def finalize(self, field_name: str, by_user: Optional[int] = None):
@@ -96,6 +98,12 @@ class Proposal(db.Model):
         if self.is_final(key):
             raise FinalizedError(f"Field '{key}' is finalized and cannot be modified.")
         return value
+    
+    def has_permission(self, user, min_role) -> bool:
+        for participant in self.participants:
+            if participant.user_id == user.id:
+                return participant.permission.value >= min_role.value
+        return False
 
 
 class Message(db.Model):
@@ -116,9 +124,9 @@ class Message(db.Model):
     )
 
 class ProposalParticipantRole(enum.Enum):
-    ADMIN = 1
+    VIEWER = 1
     EDITOR = 2
-    VIEWER = 3
+    ADMIN = 3
 
 class ProposalParticipant(db.Model):
     proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"), primary_key=True)

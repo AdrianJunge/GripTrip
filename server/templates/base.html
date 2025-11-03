@@ -25,6 +25,10 @@
                         class="btn {% if request.endpoint == 'profile.profile' %} btn-primary{% endif %}"
                         aria-current="{% if request.endpoint == 'profile.profile' %}page{% endif %}">Profile</a>
 
+                    <a href="{{ url_for('trip.create_trip') }}"
+                        class="btn {% if request.endpoint == 'trip.create_trip' %} btn-primary{% endif %}"
+                        aria-current="{% if request.endpoint == 'trip.create_trip' %}page{% endif %}">Create Trip</a>
+
                     <a href="{{ url_for('auth.logout') }}" class="btn">Logout</a>
                 </nav>
             </div>

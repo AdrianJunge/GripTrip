@@ -37,9 +37,10 @@ def create_app(test_config=None):
     def load_user(user_id):
         return db.session.get(model.User, int(user_id))
 
-    from . import main, auth, profile
+    from . import main, auth, profile, trip
     app.register_blueprint(main.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(profile.bp)
+    app.register_blueprint(trip.bp)
 
     return app

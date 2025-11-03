@@ -9,6 +9,14 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 @login_required
 def index():
+    trips = (
+        model.Proposal.query
+        .filter(model.Proposal.participants.any(user_id=current_user.id))
+        .order_by(model.Proposal.timestamp.desc())
+        .all()
+    )
+
     return render_template(
-        "main/index.html"
+        "main/index.html",
+        trips=trips,
     )
