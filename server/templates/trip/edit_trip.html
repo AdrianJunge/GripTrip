@@ -109,3 +109,11 @@
     </div>
 </form>
 {% endblock %}
+
+{% block scripts %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js"></script>
+
+    <script src="{{ url_for('static', filename='js/trip/finalize.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/trip/multivalue.js') }}"></script>
+{% endblock %}

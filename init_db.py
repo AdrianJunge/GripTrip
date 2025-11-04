@@ -22,33 +22,86 @@ def init_database():
         db.create_all()
         print("Created tables successfully!")
         
-        mary = User(
+        testuser = User(
             email="a@a",
             username="testuser",
             password=generate_password_hash("a")
         )
-
-        mary_participant = ProposalParticipant(
-            user=mary,
-            permission=ProposalParticipantRole.ADMIN
+        mary = User(
+            email="mary@mary",
+            username="mary",
+            password=generate_password_hash("a")
         )
-        mary_trip = Proposal(
-            user=mary,
+        testuser_trip = Proposal(
+            user=testuser,
             title="Test Trip",
             max_participants=5,
-            participants=[mary_participant],
         )
 
-        message = Message(
-            proposal=mary_trip,
+        testuser_participant = ProposalParticipant(
+            user=testuser,
+            proposal=testuser_trip,
+            permission=ProposalParticipantRole.ADMIN
+        )
+        mary_participant = ProposalParticipant(
             user=mary,
+            proposal=testuser_trip,
+            permission=ProposalParticipantRole.EDITOR
+        )
+        testuser_trip.participants.extend([testuser_participant, mary_participant])
+
+        message = Message(
+            proposal=testuser_trip,
+            user=testuser,
             content="Welcome to the test trip!"
         )
+        message2 = Message(
+            proposal=testuser_trip,
+            user=mary,
+            content="This is a reply to the first message.",
+            response_to=message
+        )
+        message3 = Message(
+            proposal=testuser_trip,
+            user=mary,
+            content="This is another message.",
+        )
+        message4 = Message(
+            proposal=testuser_trip,
+            user=testuser,
+            content="Replying to Mary's message.",
+            response_to=message2
+        )
+        message5 = Message(
+            proposal=testuser_trip,
+            user=testuser,
+            content="Another reply to the first message but this time its very very long to test how the UI handles long messages. " * 5,
+            response_to=message
+        )
+        message6 = Message(
+            proposal=testuser_trip,
+            user=mary,
+            content="Continuing the discussion here.",
+        )
+        message7 = Message(
+            proposal=testuser_trip,
+            user=mary,
+            content="Adding more to the conversation.",
+            response_to=message5,
+        )
         
+        db.session.add(testuser)
         db.session.add(mary)
+        db.session.add(testuser_participant)
         db.session.add(mary_participant)
-        db.session.add(mary_trip)
+        db.session.add(testuser_trip)
         db.session.add(message)
+        db.session.add(message2)
+        db.session.add(message3)
+        db.session.add(message4)
+        db.session.add(message5)
+        db.session.add(message6)
+        db.session.add(message7)
         db.session.commit()
 
         print(f"Prepared database with initial data.")

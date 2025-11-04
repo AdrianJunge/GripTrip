@@ -44,16 +44,18 @@
     - [ ] participants can see all details including the list of participants => central view of a trip proposal
     - [ ] particpants with editing permissions can edit details
     - [ ] editors can give editing permissions to other participants
-    - [ ] editors can mark details as final => no longer open to discussion
-        - [ ] so every single detail can be open for discussion if not final - maybe add an own small message board for each detail with a number of messages for this detail indicating how much was already written about it?
-        - [ ] final marked details can not longer be edited
-            - [ ] but can editors still change the mark of details from final to open?
+    - [x] editors can mark details as final => no longer open to discussion
+        - [x] so every single detail can be open for discussion if not final - maybe add an own small message board for each detail with a number of messages for this detail indicating how much was already written about it?
+        - [x] final marked details can not longer be edited
+            - [x] but can editors still change the mark of details from final to open?
 - [ ] posting to message boards
     - [ ] participants can post and see other messages
         => when a user posts a message to the message board of a trip proposal, the form should include a hidden field with the identifier of the trip proposal
-    - [ ] messages are shown from most recent to oldest
-        - [ ] including name of author and timestamp
-        - [ ] no threads or replies needed
+    - [x] messages are shown from most recent to oldest
+        - [x] including name of author and timestamp
+        - [x] no threads or replies needed
+    - [x] Replies like in WhatsApp
+        - [x] Clickable so it scrolls automatically to the original message
 - [ ] creating meetups
     - [ ] participants with editing skills can set up meetups
     - [ ] provide date, time and location

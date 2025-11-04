@@ -1,3 +1,4 @@
+import datetime
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 
@@ -121,9 +122,16 @@ def edit_trip(trip_id):
 @login_required
 def view_trip(trip_id):
     trip = model.Proposal.query.get_or_404(trip_id)
+    messages = model.Message.query.filter_by(proposal_id=trip.id).order_by(model.Message.timestamp.asc()).all()
 
     if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
         flash("You do not have permission to view this trip.", "error")
         return redirect(url_for("main.index"))
 
-    return render_template("trip/view_trip.html", trip=trip)
+    now = datetime.datetime.now(datetime.timezone.utc)
+    # TODO: Remove this workaround when timestamps are always stored with timezone info
+    for m in messages:
+        if getattr(m, "timestamp", None) is not None and m.timestamp.tzinfo is None:
+            m.timestamp = m.timestamp.replace(tzinfo=datetime.timezone.utc)
+
+    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=now)

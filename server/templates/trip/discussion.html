@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='trip/messages.css') }}">
+
+<div class="post-replies">
+    <ul>
+        {% for message in messages %}
+            <div class="post-reply {% if message.user and message.user.id == current_user.id %}me{% else %}other{% endif %}" id="message-{{ message.id }}">
+                <li>
+                    <div class="reply-user">
+                        <div class="reply-user-avatar">
+                            {% if message.user %}
+                                {{ message.user.avatar }}
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </div>
+                        <span class="reply-user-username">
+                            {% if message.user %}
+                                @{{ message.user.username }}
+                            {% else %}
+                                @unknown
+                            {% endif %}
+                        </span>
+                        <span class="reply-date">
+                            {% if message.timestamp %}
+                                {% set diff = (now - message.timestamp).total_seconds() | abs %}
+                                {% if diff < 3600 %}
+                                    {{ (diff // 60)|int }}m
+                                {% elif diff < 86400 %}
+                                    {{ (diff // 3600)|int }}h
+                                {% else %}
+                                    {{ (diff // 86400)|int }}d
+                                {% endif %}
+                            {% else %}
+                                now
+                            {% endif %}
+                        </span>
+                        <button type="button" class="reply-btn" 
+                                data-reply-id="{{ message.id }}" 
+                                data-reply-author="{% if message.user %}{{ message.user.username }}{% else %}unknown{% endif %}"
+                                data-reply-content="{{ message.content|truncate(140)|e }}"
+                                title="Reply">
+                            <i class="bi bi-reply"></i>
+                        </button>
+                    </div>
+                    {% if message.response_to %}
+                        <a class="message-anchor" href="#message-{{ message.response_to.id }}">
+                            <div class="reply-quote {% if message.response_to.user and message.response_to.user.id == current_user.id %}quote-me{% else %}quote-other{% endif %}">
+                                <div class="quote-body">
+                                    <div class="quote-user">
+                                        {% if message.response_to.user %}
+                                            @{{ message.response_to.user.username }}
+                                        {% else %}
+                                            @unknown
+                                        {% endif %}
+                                    </div>
+                                    <div class="quote-content">
+                                        {{ message.response_to.content | truncate(100) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    {% endif %}
+                    <div class="reply-content">
+                        {% if message.content %}
+                            {{ message.content }}
+                        {% else %}
+                            {{ reply }}
+                        {% endif %}
+                    </div>
+                </li>
+            </div>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="reply-composer">
+    <div id="reply-preview" class="reply-preview" style="display:none;">
+        <div class="reply-preview-body">
+            <div id="reply-preview-user" class="reply-preview-user"></div>
+            <div id="reply-preview-content" class="reply-preview-content"></div>
+        </div>
+        <button type="button" id="reply-cancel" class="reply-cancel" title="Cancel reply">✕</button>
+    </div>
+
+    <form id="message-form">
+        <input type="hidden" id="response_to" name="response_to" value="">
+        <textarea id="message-input" name="content" rows="3" placeholder="Write a message..."></textarea>
+        <div class="composer-actions">
+            <button type="submit" id="post-message" class="post-message">Post Message</button>
+        </div>
+    </form>
+</div>
