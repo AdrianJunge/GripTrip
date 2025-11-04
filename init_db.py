@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from server import create_app, db
-from server.model import User
+from server.model import Message, Proposal, ProposalParticipant, ProposalParticipantRole, User
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
@@ -27,8 +27,28 @@ def init_database():
             username="testuser",
             password=generate_password_hash("a")
         )
+
+        mary_participant = ProposalParticipant(
+            user=mary,
+            permission=ProposalParticipantRole.ADMIN
+        )
+        mary_trip = Proposal(
+            user=mary,
+            title="Test Trip",
+            max_participants=5,
+            participants=[mary_participant],
+        )
+
+        message = Message(
+            proposal=mary_trip,
+            user=mary,
+            content="Welcome to the test trip!"
+        )
         
         db.session.add(mary)
+        db.session.add(mary_participant)
+        db.session.add(mary_trip)
+        db.session.add(message)
         db.session.commit()
 
         print(f"Prepared database with initial data.")

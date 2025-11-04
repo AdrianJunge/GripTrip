@@ -11,7 +11,7 @@ bp = Blueprint("main", __name__)
 def index():
     trips = (
         model.Proposal.query
-        .filter(model.Proposal.participants.any(user_id=current_user.id))
+        .filter(model.Proposal.max_participants > model.Proposal.participant_count)
         .order_by(model.Proposal.timestamp.desc())
         .all()
     )

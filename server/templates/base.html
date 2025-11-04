@@ -36,6 +36,17 @@
 
         <div class="main-wrapper">
             <div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="notification error">{{ message }}</div>
+                        {% elif category == 'success' %}
+                            <div class="notification success">{{ message }}</div>
+                        {% else %}
+                            <div class="notification {{ category }}">{{ message }}</div>
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
                 {% block content %}{% endblock %}
             </div>
         </div>
@@ -50,8 +61,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js"></script>
 
-    <script src="{{ url_for('static', filename='js/multivalue.js') }}"></script>
     <script src="{{ url_for('static', filename='js/base.js') }}"></script>
-        
+    <script src="{{ url_for('static', filename='js/multivalue.js') }}"></script>
+
+    {% block scripts %}{% endblock %}
+
     </body>
 </html>

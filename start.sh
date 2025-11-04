@@ -43,10 +43,16 @@ echo "Database and user created. Test connecting as webapp:"
 docker exec -i "$CONTAINER_NAME" mysql -h 127.0.0.1 -P 3306 -u webapp -p"$WEBAPP_PW" -D "$DB_NAME" -e "SHOW TABLES;"
 
 venv_dir="/tmp/test_env_$(python --version 2>&1)"
-rm -rf "$venv_dir"
-echo "Setting up Python virtual environment in $venv_dir ..."
-python3 -m venv "$venv_dir"
+
+if [ ! -d "$venv_dir" ]; then
+    echo "Virtual environment not found — creating one..."
+    python3 -m venv "$venv_dir"
+else
+    echo "Virtual environment already exists — reusing it."
+fi
+
 source "$venv_dir/bin/activate"
+pip install --upgrade pip
 pip install -r requirements.txt
 python init_db.py
 

@@ -1,4 +1,5 @@
 import datetime
+import json
 from sqlalchemy import Enum as SQLAlchemyEnum
 import enum
 from typing import List, Optional, Tuple
@@ -68,21 +69,26 @@ class Proposal(db.Model):
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
     # Trip details - optional/tentative
-    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     budget: Mapped[Optional[float]] = mapped_column(Float, default=None, nullable=True)
     accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
     transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
-    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
 
-    dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     activities: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    
+    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
+    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
 
     finalized_flags: Mapped[dict] = mapped_column(
         MutableDict.as_mutable(JSON),
         default=lambda: {}
     )
+
+    @property
+    def participant_count(self):
+        return len(self.participants)
 
     def is_final(self, field_name: str) -> bool:
         if self.finalized_flags is None:
@@ -92,16 +98,55 @@ class Proposal(db.Model):
     def finalize(self, field_name: str, by_user: Optional[int] = None):
         self.finalized_flags[field_name] = {
             "final": True,
-            "at": datetime.datetime.now(datetime.timezone.utc)
+            "at": datetime.datetime.now(datetime.timezone.utc).isoformat()
         }
 
     def unfinalize(self, field_name: str):
         self.finalized_flags.pop(field_name, None)
 
-    @validates("dates", "final_date", "budget", "accommodation", "transportation", "activities", "departure_locations", "final_departure_location", "destinations")
-    def _validate_not_final(self, key, value):
+    @validates("dates", "budget", "accommodation", "transportation", "activities", "departure_locations", "destinations")
+    def _validate_attributes(self, key, value):
         if self.is_final(key):
             raise FinalizedError(f"Field '{key}' is finalized and cannot be modified.")
+        
+        if key == "budget":
+            try:
+                if value is not None:
+                    value = float(value)
+            except ValueError:
+                raise ValueError("Budget must be a number.")
+            if value is not None and value < 0:
+                raise ValueError("Budget cannot be negative.")
+
+        if key == "max_participants":
+            try:
+                if value is not None:
+                    value = int(value)
+            except ValueError:
+                raise ValueError("Maximum participants must be an integer.")
+            if value is not None and value < 1:
+                raise ValueError("Maximum participants must be at least 1.")
+
+        if key == "dates":
+            for date_range in value:
+                if (not isinstance(date_range, tuple) or len(date_range) != 2 or
+                    not all(isinstance(d, str) for d in date_range)):
+                    raise ValueError("Each date range must be a tuple of two ISO format datetime strings.")
+                start = datetime.datetime.fromisoformat(date_range[0])
+                end = datetime.datetime.fromisoformat(date_range[1])
+                if start >= end:
+                    raise ValueError("In each date range, start date must be before end date.")
+                
+        if key == "accommodation":
+            pass
+
+        if key == "transportation":
+            pass
+
+        if key == "activities" or key == "destinations" or key == "departure_locations":
+            if not isinstance(value, list):
+                raise ValueError("Must be a list of strings.")
+
         return value
     
     def has_permission(self, user, min_role) -> bool:
@@ -114,6 +159,7 @@ class Proposal(db.Model):
 class Message(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    user: Mapped["User"] = relationship()
     content: Mapped[str] = mapped_column(String(1024))
     timestamp: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
