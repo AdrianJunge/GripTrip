@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+
+{% block head %}
+    <title>Profile of {{ user.username }} - {{ app_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile/profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='trip/trips.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <section class="profile-section">
+
+        <div class="profile-top">
+            <div class="profile-basic-info">
+                <div class="profile-avatar">{{ user.avatar }}</div>
+                
+                <div class="profile-name">
+                    <h3>{{ user.name }}</h3>
+                    <div class="profile-username">@{{ user.username }}</div>
+                </div>
+            </div>
+
+            <div class="profile-bio">
+                {% if not user.bio %}
+                    <em>No bio available.</em>
+                {% else %}
+                    {{ user.bio }}
+                {% endif %}
+            </div>
+        </div>    
+
+        {% if user.id == current_user.id %}
+        <div class="profile-stats">
+            <div class="stat">
+                <span class="stat-label">Following: </span>
+                <span class="stat-number">{{ user.following | length }}</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Followers: </span>
+                <span class="stat-number">{{ user.followers | length }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="profile-actions">
+            <a href="/" class="btn btn-outline-secondary">← Home</a>
+            {% if user.id != current_user.id %}
+                {% if current_user.is_following(user) %}
+                    <form action="{{ url_for('profile.unfollow', user_id=user.id) }}" method="post">
+                        <button type="submit" class="btn btn-primary">Unfollow</button>
+                    </form>
+                {% else %}
+                    <form action="{{ url_for('profile.follow', user_id=user.id) }}" method="post">
+                        <button type="submit" class="btn btn-primary">Follow</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <a class="btn btn-primary" href="{{ url_for('profile.edit_profile') }}">Edit Profile</a>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="posts-section">
+        <h2 class="section-title">Trips created by {% if current_user.id == user.id %} You {% else %} {{ user.username }} {% endif %}</h2>
+        {% if user.proposals | length == 0 %}
+            <em>No trips proposed yet.</em>
+        {% else %}
+            <div class="container">
+                <div class="trips-grid">
+                    {% for trip in user.proposals %}
+                        <a class="trip-card" href="{{ url_for('trip.view_trip', trip_id=trip.id) }}">
+                            <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
+                            <div class="trip-card-body">
+                                <p class="trip-dest">Destinations: </p>
+                                    {% if trip.destinations | length == 0 %}
+                                        <em>No destinations specified.</em>
+                                    {% else %}
+                                        {% for destination in trip.destinations %}
+                                            <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </p>
+                                <p class="trip-dates">Dates: 
+                                    {% if trip.dates | length == 0 %}
+                                        <em>No dates specified.</em>
+                                    {% else %}
+                                        {% for start, end in trip.dates %}
+                                            <span>{{ start }} - {{ end }}</span>{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </p>
+                                <p>By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
+                            </div>
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

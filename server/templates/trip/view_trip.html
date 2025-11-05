@@ -14,7 +14,11 @@
 
     <div class="mb-3">
         <p class="mb-1">Participants: <strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></p>
-        <p class="mb-1">Created by: <strong>{{ trip.user.username }}</strong></p>
+        <p class="mb-1">Created by:
+            <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
+                <strong>{{ trip.user.username }}</strong>
+            </a>
+        </p>
     </div>
 
     <div class="row">

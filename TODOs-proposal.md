@@ -16,10 +16,9 @@
     - [x] all controllers/views only accessible by authenticated users (test this one in the very end)
         - [x] exception is the landing page and ressources needed to create accounts and login
 
-- [ ] displaying and editing user profiles
-    - [ ] users can edit a short description/bio of themselves
-    - [ ] other users can read the bio
-    - [ ] every mention to a user in the application must link to their profile view
+- [x] displaying and editing user profiles
+    - [x] users can edit a short description/bio of themselves
+    - [x] other users can read the bio
 
 - [x] creating trip proposals
     - [x] users can create new trip proposals => they become a participant of it and have editing permissions
@@ -38,6 +37,11 @@
     - [ ] users can see list of trip proposals (from other users and still accepting new participants)
         - [ ] with current details and number of participants joined vs max participants allowed
     - [ ] users can join trips if possible => they become a participant of it
+        - [ ] add explicit "join" button
+        - [ ] don't make whole card clickable
+        - [ ] creator name has to link to profile
+    - [ ] still list trips that are full with participants?
+        => greyed out "join" button etc
 
 # Rest of mandatory functionality
 - [ ] displaying and editing trip proposal details
@@ -82,6 +86,8 @@
     - [ ] trip becomes read only
         - [ ] no new messages, details not editable, no new participants can join, no longer discoverable by other users
     - [ ] participants can still access the details and the message board
+- [ ] every mention to a user in the application must link to their profile view
+    - search for ".username" in the application code
 
 
 # Models

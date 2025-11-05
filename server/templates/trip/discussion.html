@@ -14,11 +14,9 @@
                             {% endif %}
                         </div>
                         <span class="reply-user-username">
-                            {% if message.user %}
+                            <a href="{{ url_for('profile.view_profile', user_id=message.user.id) }}" class="link">
                                 @{{ message.user.username }}
-                            {% else %}
-                                @unknown
-                            {% endif %}
+                            </a>
                         </span>
                         <span class="reply-date">
                             {% if message.timestamp %}
@@ -47,11 +45,9 @@
                             <div class="reply-quote {% if message.response_to.user and message.response_to.user.id == current_user.id %}quote-me{% else %}quote-other{% endif %}">
                                 <div class="quote-body">
                                     <div class="quote-user">
-                                        {% if message.response_to.user %}
-                                            @{{ message.response_to.user.username }}
-                                        {% else %}
-                                            @unknown
-                                        {% endif %}
+                                        <!-- <a href="{{ url_for('profile.view_profile', user_id=message.user.id) }}" class="link"> -->
+                                        @{{ message.response_to.user.username }}
+                                        <!-- </a> -->
                                     </div>
                                     <div class="quote-content">
                                         {{ message.response_to.content | truncate(100) }}

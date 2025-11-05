@@ -21,9 +21,9 @@
                         class="btn {% if request.endpoint == 'main.index' %} btn-primary{% endif %}"
                         aria-current="{% if request.endpoint == 'main.index' %}page{% endif %}">Home</a>
 
-                    <a href="{{ url_for('profile.profile') }}"
-                        class="btn {% if request.endpoint == 'profile.profile' %} btn-primary{% endif %}"
-                        aria-current="{% if request.endpoint == 'profile.profile' %}page{% endif %}">Profile</a>
+                    <a href="{{ url_for('profile.view_profile') }}"
+                        class="btn {% if request.endpoint == 'profile.view_profile' %} btn-primary{% endif %}"
+                        aria-current="{% if request.endpoint == 'profile.view_profile' %}page{% endif %}">Profile</a>
 
                     <a href="{{ url_for('trip.create_trip') }}"
                         class="btn {% if request.endpoint == 'trip.create_trip' %} btn-primary{% endif %}"

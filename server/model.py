@@ -43,6 +43,9 @@ class User(flask_login.UserMixin, db.Model):
             return username_parts[0][0].upper() + username_parts[-1][0].upper()
         return self.username[0].upper() if self.username else "?"
 
+    def is_following(self, user):
+        return user in self.following
+
 class ProposalStatus(enum.Enum):
     OPEN = 1
     CLOSED_TO_NEW = 2
