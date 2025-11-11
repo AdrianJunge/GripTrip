@@ -4,12 +4,12 @@
     <title>Home - {{ app_name }}</title>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""/>
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""></script>
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='main/map.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='trip/trips.css') }}">
@@ -49,11 +49,6 @@
 </div>
 
 <div id="map"> </div>
-
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-o9R3dAqaYI1yZC1t8f2ZQwxr3m1W7L3Y+ozJmD5n1kA="
-    crossorigin=""></script>
 
 <script> 
     const map = L.map('map').setView([54, 15], 3);
