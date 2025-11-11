@@ -20,7 +20,7 @@
 <div class="container">
     <div class="trips-grid">
         {% for trip in trips %}
-            <a class="trip-card" href="{{ url_for('trip.view_trip', trip_id=trip.id) }}">
+            <a id="trip-{{ trip.id }}" class="trip-card" href="{{ url_for('trip.view_trip', trip_id=trip.id) }}" search-terms='{{ ([trip.title] + trip.destinations) | tojson }}'>
                 <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
                 <div class="trip-card-body">
                     <p class="trip-dest">Destinations: </p>
