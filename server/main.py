@@ -4,6 +4,7 @@ from flask_login import current_user, login_required
 from . import db, model
 from datetime import timezone
 from countryinfo import CountryInfo
+from sqlalchemy.sql import func
 
 bp = Blueprint("main", __name__)
 
@@ -12,7 +13,10 @@ bp = Blueprint("main", __name__)
 def index():
     trips = (
         model.Proposal.query
-        .filter(model.Proposal.max_participants > model.Proposal.participant_count)
+        # can't use .participant_count directly in filter as it is a @property and only works for already loaded ORM objects
+        .outerjoin(model.Proposal.participants)
+        .group_by(model.Proposal.id)
+        .having(func.count(model.ProposalParticipant.user_id) < model.Proposal.max_participants)
         .filter(model.Proposal.status == model.ProposalStatus.OPEN)
         .order_by(model.Proposal.timestamp.desc())
         .all()

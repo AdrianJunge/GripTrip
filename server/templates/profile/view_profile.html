@@ -16,7 +16,7 @@
                 <div class="profile-avatar">{{ user.avatar }}</div>
                 
                 <div class="profile-name">
-                    <h3>{{ user.name }}</h3>
+                    <h3>{{ user.username }}</h3>
                     <div class="profile-username">@{{ user.username }}</div>
                 </div>
             </div>
@@ -61,19 +61,26 @@
         </div>
     </section>
 
-    <section class="posts-section">
-        <h2 class="section-title">Trips created by {% if current_user.id == user.id %} You {% else %} {{ user.username }} {% endif %}</h2>
-        {% if user.proposals | length == 0 %}
-            <em>No trips proposed yet.</em>
+    {% macro trip_section(title, trips, empty_text) %}
+        <h2 class="section-title">{{ title }}</h2>
+        {% if trips | length == 0 %}
+            <em>{{ empty_text }}</em>
         {% else %}
             <div class="container">
-                <div class="trips-grid">
-                    {% for trip in user.proposals %}
-                        {% include 'trip/trip_card.html' with context %}
-                    {% endfor %}
-                </div>
+            <div class="trips-grid">
+                {% for trip in trips %}
+                {% include 'trip/trip_card.html' with context %}
+                {% endfor %}
+            </div>
             </div>
         {% endif %}
+    {% endmacro %}
+
+    <section class="posts-section">
+        {% set display_name = 'you' if current_user.id == user.id else user.username %}
+
+        {{ trip_section("Trips created by " ~ display_name, user.proposals, "No trips proposed yet.") }}
+        {{ trip_section("Other trips joined by " ~ display_name, trips_joined, "No trips joined yet.") }}
     </section>
 </div>
 {% endblock %}

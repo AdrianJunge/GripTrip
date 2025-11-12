@@ -14,7 +14,15 @@ def view_profile(user_id):
     if user_id is None:
         user_id = current_user.id
     user = model.User.query.get_or_404(user_id)
-    return render_template("profile/view_profile.html", user=user)
+    trips_joined = (
+        model.Proposal.query
+        .join(model.Proposal.participants)
+        .filter(model.ProposalParticipant.user_id == user.id)
+        .filter(model.Proposal.user_id != user.id)
+        .order_by(model.Proposal.timestamp.desc())
+        .all()
+    )
+    return render_template("profile/view_profile.html", user=user, trips_joined=trips_joined)
 
 
 @bp.route("/profile/edit", methods=["GET", "POST"])

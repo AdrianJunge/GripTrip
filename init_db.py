@@ -53,6 +53,19 @@ def init_database():
         )
         testuser_trip.participants.extend([testuser_participant, mary_participant])
 
+
+        another_trip = Proposal(
+            user=mary,
+            title="Mary's Trip",
+            max_participants=3,
+        )
+        mary_participant_another_trip = ProposalParticipant(
+            user=mary,
+            proposal=another_trip,
+            permission=ProposalParticipantRole.EDITOR
+        )
+        another_trip.participants.extend([mary_participant_another_trip])
+
         message = Message(
             proposal=testuser_trip,
             user=testuser,
@@ -97,7 +110,9 @@ def init_database():
         db.session.add(mary)
         db.session.add(testuser_participant)
         db.session.add(mary_participant)
+        db.session.add(mary_participant_another_trip)
         db.session.add(testuser_trip)
+        db.session.add(another_trip)
         db.session.add(message)
         db.session.add(message2)
         db.session.add(message3)
