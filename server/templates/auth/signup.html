@@ -10,6 +10,12 @@
             <div class="username-field"><input type="text" name="username" placeholder="Username" required/></div>
             <div class="password-field"><input type="password" name="password" placeholder="Password" required/></div>
             <div class="password-field"><input type="password" name="password_repeat" placeholder="Repeat Password" required/></div>
+            <div class="country-field"><select name= "country_code" required>
+                <option value="" disabled selected>Select Home Country</option>
+                {% for country in countries %}
+                    <option value="{{ country.code }}">{{ country.name }}</option>
+                {% endfor %}
+            </select></div>
             <div class="login-button"><input type="submit" value="Sign Up"/></div>
         </form>
         <p class="signup-prompt">Already signed up? <a href="{{ url_for('auth.login') }}">Log In</a></p>

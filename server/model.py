@@ -23,6 +23,10 @@ class User(flask_login.UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(256))
     proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
+    country_code: Mapped[str] = mapped_column(ForeignKey("country.code"), nullable=True)
+    country: Mapped["Country"] = relationship(
+        backref="users"
+    )
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
         primaryjoin=FollowingAssociation.follower_id == id,
@@ -211,3 +215,7 @@ class MeetupParticipant(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     meetup: Mapped["Meetup"] = relationship(back_populates="participants")
     user: Mapped["User"] = relationship()
+
+class Country(db.Model):
+    code: Mapped[str] = mapped_column(String(3), primary_key=True)
+    name: Mapped[str] = mapped_column(String(128), unique=True)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-from server import create_app, db
-from server.model import Message, Proposal, ProposalParticipant, ProposalParticipantRole, User
+from server import create_app, db, model
+from server.model import Message, Proposal, ProposalParticipant, ProposalParticipantRole, User, Country
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
@@ -21,6 +21,60 @@ def init_database():
         
         db.create_all()
         print("Created tables successfully!")
+
+        countries = [
+        ("ALB", "Albania"),
+        ("AUT", "Austria"),
+        ("BEL", "Belgium"),
+        ("BIH", "Bosnia and Herzegovina"),
+        ("BGR", "Bulgaria"),
+        ("HRV", "Croatia"),
+        ("CYP", "Cyprus"),
+        ("CZE", "Czechia"),
+        ("DNK", "Denmark"),
+        ("EST", "Estonia"),
+        ("FIN", "Finland"),
+        ("FRA", "France"),
+        ("DEU", "Germany"),
+        ("GRC", "Greece"),
+        ("HUN", "Hungary"),
+        ("ISL", "Iceland"),
+        ("IRL", "Ireland"),
+        ("ITA", "Italy"),
+        ("LVA", "Latvia"),
+        ("LIE", "Liechtenstein"),
+        ("LTU", "Lithuania"),
+        ("LUX", "Luxembourg"),
+        ("MLT", "Malta"),
+        ("MDA", "Moldova"),
+        ("MCO", "Monaco"),
+        ("MNE", "Montenegro"),
+        ("NLD", "Netherlands"),
+        ("MKD", "North Macedonia"),
+        ("NOR", "Norway"),
+        ("POL", "Poland"),
+        ("PRT", "Portugal"),
+        ("ROU", "Romania"),
+        ("RUS", "Russia"),
+        ("SMR", "San Marino"),
+        ("SRB", "Serbia"),
+        ("SVK", "Slovakia"),
+        ("SVN", "Slovenia"),
+        ("ESP", "Spain"),
+        ("SWE", "Sweden"),
+        ("CHE", "Switzerland"),
+        ("TUR", "Turkey"),
+        ("UKR", "Ukraine"),
+        ("GBR", "United Kingdom"),
+        ("VAT", "Vatican City"),
+        ]
+
+        for code, name in countries:
+            if not Country.query.get(code):
+                db.session.add(Country(code=code, name=name))
+        db.session.commit()
+        print("Populated countries table.")
+
         
         testuser = User(
             email="a@a",

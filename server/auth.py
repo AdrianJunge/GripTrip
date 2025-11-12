@@ -11,11 +11,13 @@ bp = Blueprint("auth", __name__)
 @bp.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "GET":
-        return render_template("auth/signup.html")
+        countries = model.Country.query.order_by(model.Country.name).all()
+        return render_template("auth/signup.html", countries = countries)
     elif request.method == "POST":
         email = request.form.get("email")
         username = request.form.get("username")
         password = request.form.get("password")
+        country_code = request.form.get("country_code")
 
         if password != request.form.get("password_repeat"):
             flash("Error, passwords are different!", "error")
@@ -29,7 +31,7 @@ def signup():
             return redirect(url_for("auth.signup"))
 
         password_hash = generate_password_hash(password)
-        new_user = model.User(email=email, username=username, password=password_hash)
+        new_user = model.User(email=email, username=username, password=password_hash, country_code=country_code)
         db.session.add(new_user)
         db.session.commit()
         flash("User created successfully! Please log in.", "success")
