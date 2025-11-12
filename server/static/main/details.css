@@ -1,10 +1,21 @@
 .notification {
-    padding: 12px 16px;
-    margin: auto;
+    padding: 12px 12px 12px 14px;
     border-radius: 8px;
     font-size: 14px;
-    width: 50%;
-    text-align: center;
+    display: flex;
+    transform: translateX(120%);
+    transition: transform 300ms ease, opacity 300ms ease;
+    align-items: center;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(120%);
+    opacity: 0;
 }
 
 .notification.error {
@@ -17,6 +28,38 @@
     background: #c6f6d5;
     color: #2f855a;
     border-left: 4px solid #38a169;
+}
+
+.notification.info {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    border-left: 4px solid #3182ce;
+}
+
+.notification.warning {
+    background: #fff7ed;
+    color: #975a16;
+    border-left: 4px solid #dd6b20;
+}
+
+.notification .close-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: inherit;
+}
+
+#notification-wrapper {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 20000;
+}
+
+#notification-wrapper .notification {
+    pointer-events: auto;
 }
 
 .logo {

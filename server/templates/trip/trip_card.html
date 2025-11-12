@@ -19,7 +19,9 @@
                 {% endfor %}
             {% endif %}
         </p>
-        <p>By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
+        <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
+            <p>By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
+        </a>
     </div>
     <form action="{{ url_for('trip.join', trip_id=trip.id) }}" method="post">
         <button type="submit" class="btn btn-primary trip-card-button">Join Trip</button>

@@ -43,4 +43,9 @@ def create_app(test_config=None):
     app.register_blueprint(profile.bp)
     app.register_blueprint(trip.bp)
 
+    from .const import NOTIFICATION_TYPES
+    @app.context_processor
+    def inject_notification_types():
+      return {"NOTIFICATION_TYPES": NOTIFICATION_TYPES}
+
     return app

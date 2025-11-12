@@ -7,7 +7,7 @@
 - [ ] Which special attributes might be needed for Skiing??
 - [ ] discuss with teachers how many points you could get with the features you plan to implement
 
-    
+
 # Mandatory functionality
 - [x] managing user accounts
     - [x] users can create accounts
@@ -31,9 +31,7 @@
     - [x] check validity of given attributes
         - e.g. end-date > start-date, budget is float etc
 
-- [ ] Async changes of edit form when in parallel other users change details or finalize?
 
-- [ ] notification info color
 - [ ] browsing, joining and leaving trip proposals
     - [x] users can see list of trip proposals (from other users and still accepting new participants)
         - [x] with current details and number of participants joined vs max participants allowed
@@ -91,6 +89,7 @@
     - [ ] participants can still access the details and the message board
 - [ ] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
+- [ ] Async changes of edit form when in parallel other users change details or finalize?
 
 
 # Models
