@@ -47,14 +47,16 @@
         {% endfor %}
     </div>
 </div>
-
-<div id="map"
+<div class= "map-wrapper">
+    <div id="map"
     {% if user_home %}
     data-lat="{{ user_home[0] }}"
     data-lon="{{ user_home[1] }}"
     data-country="{{ user_country }}"
     {% endif %}
 ></div>
+</div>
+
 
 
 <script src ="{{ url_for('static', filename='js/main/home_popup.js') }}"></script>
