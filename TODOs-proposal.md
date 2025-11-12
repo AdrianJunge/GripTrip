@@ -33,15 +33,18 @@
 
 - [ ] Async changes of edit form when in parallel other users change details or finalize?
 
+- [ ] notification info color
 - [ ] browsing, joining and leaving trip proposals
-    - [ ] users can see list of trip proposals (from other users and still accepting new participants)
-        - [ ] with current details and number of participants joined vs max participants allowed
-    - [ ] users can join trips if possible => they become a participant of it
-        - [ ] add explicit "join" button
-        - [ ] don't make whole card clickable
-        - [ ] creator name has to link to profile
+    - [x] users can see list of trip proposals (from other users and still accepting new participants)
+        - [x] with current details and number of participants joined vs max participants allowed
+    - [x] users can join trips if possible => they become a participant of it
+        - [x] add explicit "join" button
+        - [x] don't make whole card clickable
+    - [ ] creator name has to link to profile
     - [ ] still list trips that are full with participants?
         => greyed out "join" button etc
+    - [ ] still list trips you are a participant in? Maybe different color better
+    - [ ] List participating trips in user profil
 
 # Rest of mandatory functionality
 - [ ] displaying and editing trip proposal details

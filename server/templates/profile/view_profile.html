@@ -69,30 +69,7 @@
             <div class="container">
                 <div class="trips-grid">
                     {% for trip in user.proposals %}
-                        <a class="trip-card" href="{{ url_for('trip.view_trip', trip_id=trip.id) }}">
-                            <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
-                            <div class="trip-card-body">
-                                <p class="trip-dest">Destinations: </p>
-                                    {% if trip.destinations | length == 0 %}
-                                        <em>No destinations specified.</em>
-                                    {% else %}
-                                        {% for destination in trip.destinations %}
-                                            <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                </p>
-                                <p class="trip-dates">Dates: 
-                                    {% if trip.dates | length == 0 %}
-                                        <em>No dates specified.</em>
-                                    {% else %}
-                                        {% for start, end in trip.dates %}
-                                            <span>{{ start }} - {{ end }}</span>{% if not loop.last %}, {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
-                                </p>
-                                <p>By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )</p>
-                            </div>
-                        </a>
+                        {% include 'trip/trip_card.html' with context %}
                     {% endfor %}
                 </div>
             </div>

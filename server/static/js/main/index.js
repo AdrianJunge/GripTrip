@@ -4,8 +4,6 @@ document.getElementById('search-bar').addEventListener('input', function (event)
 
     trips.forEach(function (trip) {
         const searchTerms = JSON.parse(trip.getAttribute('search-terms')).map(term => term.toLowerCase());
-        console.log(searchTerms);
-        console.log(searchTerms.includes('test'));
 
         if (searchTerms.some(term => term.includes(searchTerm))) {
             trip.style.display = 'block';

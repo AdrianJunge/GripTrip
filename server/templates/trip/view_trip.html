@@ -7,6 +7,19 @@
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1 class="mb-0">{{ trip.title or trip.name }}</h1>
+        <div class="openness">
+            {% if trip.status == trip.status.__class__.OPEN %}
+                <span class="badge bg-secondary">OPEN</span>
+            {% elif trip.status == trip.status.__class__.CLOSED_TO_NEW %}
+                <span class="badge bg-warning">CLOSED TO NEW</span>
+            {% elif trip.status == trip.status.__class__.FINALIZED %}
+                <span class="badge bg-success">FINALIZED</span>
+            {% elif trip.status == trip.status.__class__.CANCELLED %}
+                <span class="badge bg-danger">CANCELLED</span>
+            {% else %}
+                <span class="badge bg-secondary">UNKNOWN STATE</span>
+            {% endif %}
+        </div>
         <div>
             <a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" class="btn btn-primary">Edit Trip</a>
         </div>

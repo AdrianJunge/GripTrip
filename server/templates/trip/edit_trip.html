@@ -20,6 +20,15 @@
                 <label for="maxParticipants" class="form-label">Maximum Participants</label>
                 <input type="number" class="form-control" id="maxParticipants" name="max_participants" min="1" value="{{ trip.max_participants }}">
             </div>
+
+            <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    {% for status in ProposalStatus %}
+                        <option value="{{ status.name }}" {% if trip.status.name == status.name %}selected{% endif %}>{{ status.name.replace('_', ' ').title() }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
 

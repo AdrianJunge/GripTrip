@@ -13,6 +13,7 @@ def index():
     trips = (
         model.Proposal.query
         .filter(model.Proposal.max_participants > model.Proposal.participant_count)
+        .filter(model.Proposal.status == model.ProposalStatus.OPEN)
         .order_by(model.Proposal.timestamp.desc())
         .all()
     )

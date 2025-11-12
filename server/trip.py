@@ -105,6 +105,13 @@ def edit_trip(trip_id):
         try:
             trip.title = trip_name
             trip.max_participants = int(max_participants)
+            status_str = request.form.get("status")
+            if status_str:
+                try:
+                    trip.status = model.ProposalStatus[status_str]
+                except Exception:
+                    flash("Invalid status selected", "error")
+                    return redirect(url_for("trip.edit_trip", trip_id=trip.id))
         except Exception as e:
             flash(str(e), "error")
             return redirect(url_for("trip.edit_trip", trip_id=trip.id))
@@ -115,7 +122,7 @@ def edit_trip(trip_id):
         db.session.commit()
         return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
-    return render_template("trip/edit_trip.html", trip=trip)
+    return render_template("trip/edit_trip.html", trip=trip, ProposalStatus=model.ProposalStatus)
 
 
 @bp.route("/trip/<int:trip_id>")
@@ -135,3 +142,33 @@ def view_trip(trip_id):
             m.timestamp = m.timestamp.replace(tzinfo=datetime.timezone.utc)
 
     return render_template("trip/view_trip.html", trip=trip, messages=messages, now=now)
+
+
+@bp.route("/trip/join/<int:trip_id>", methods=["POST"])
+@login_required
+def join(trip_id):
+    trip = model.Proposal.query.get_or_404(trip_id)
+
+    if trip.participant_count >= trip.max_participants:
+        flash("This trip is already full.", "error")
+        return redirect(url_for("main.index"))
+
+    existing_participant = model.ProposalParticipant.query.filter_by(
+        proposal_id=trip.id,
+        user_id=current_user.id
+    ).first()
+
+    if existing_participant:
+        flash("You are already a participant in this trip.", "info")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    new_participant = model.ProposalParticipant(
+        user_id=current_user.id,
+        proposal_id=trip.id,
+        permission=model.ProposalParticipantRole.VIEWER,
+    )
+
+    trip.participants.append(new_participant)
+    db.session.commit()
+
+    return redirect(url_for("trip.view_trip", trip_id=trip.id))
