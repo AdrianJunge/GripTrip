@@ -9,6 +9,7 @@ from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
+import pycountry
 
 from . import db
 
@@ -23,10 +24,7 @@ class User(flask_login.UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(256))
     proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
-    country_code: Mapped[str] = mapped_column(ForeignKey("country.code"), nullable=True)
-    country: Mapped["Country"] = relationship(
-        backref="users"
-    )
+    country_code: Mapped[str] = mapped_column(String(3), nullable=False)
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
         primaryjoin=FollowingAssociation.follower_id == id,
@@ -39,6 +37,11 @@ class User(flask_login.UserMixin, db.Model):
         secondaryjoin=FollowingAssociation.follower_id == id,
         back_populates="following",
     )
+
+    @property
+    def country(self):
+        country = pycountry.countries.get(alpha_3=self.country_code)
+        return country.name if country else "Unknown"
 
     @property
     def avatar(self):
@@ -215,7 +218,3 @@ class MeetupParticipant(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     meetup: Mapped["Meetup"] = relationship(back_populates="participants")
     user: Mapped["User"] = relationship()
-
-class Country(db.Model):
-    code: Mapped[str] = mapped_column(String(3), primary_key=True)
-    name: Mapped[str] = mapped_column(String(128), unique=True)

@@ -17,19 +17,17 @@ def index():
         .all()
     )
 
-    user_country_name = current_user.country.name
-    user_home = None
-    if user_country_name:
-        try:
-            country = CountryInfo(user_country_name)
-            lat, lon = country.info()["latlng"]
-            user_home = (lat, lon)
-        except:
-            user_home = None
+    user_country = current_user.country
+    try:
+        country = CountryInfo(user_country)
+        lat, lon = country.info()["latlng"]
+        user_home = (lat, lon)
+    except Exception as e:
+        user_home = None
 
     return render_template(
         "main/index.html",
         trips=trips,
         user_home=user_home,
-        user_country = user_country_name,
+        user_country=user_country,
     )
