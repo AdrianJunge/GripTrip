@@ -116,7 +116,7 @@ class Proposal(db.Model):
 
     @validates("dates", "budget", "accommodation", "transportation", "activities", "departure_locations", "destinations")
     def _validate_attributes(self, key, value):
-        if self.is_final(key):
+        if self.is_final(key) and value != getattr(self, key):
             raise FinalizedError(f"Field '{key}' is finalized and cannot be modified.")
         
         if key == "budget":

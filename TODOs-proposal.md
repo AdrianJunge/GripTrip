@@ -1,10 +1,10 @@
 # General
-- [ ] Ask Josue how you are supposed to do the statement if you use e.g. github copilot
+- [x] Ask Josue how you are supposed to do the statement if you use e.g. github copilot
     - memorize/write down every single line/part of the code that was completed by copilot?
 - [x] Decide specialized travel app
     => ski trips
+- [x] Setup VS Code "shared coding"
 - [ ] Which special attributes might be needed for Skiing??
-- [ ] Setup VS Code "shared coding"
 - [ ] discuss with teachers how many points you could get with the features you plan to implement
 
     
@@ -127,9 +127,10 @@
 
 
 # Additional functionality
+- [ ] friends
+    - [ ] you can choose trips to be public, just for friends, private
 - [ ] user can check a map where they had their trips - leaflet.js
 - [ ] statistics of your trips
-- [ ] follower
 - [ ] "live" messages via async JS
 - [ ] "brilliant" user interface
     - remarkable appearance at level of current standards for professional applications

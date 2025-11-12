@@ -32,7 +32,7 @@ def signup():
             return redirect(url_for("auth.signup"))
 
         password_hash = generate_password_hash(password)
-        new_user = model.User(email=email, username=username, password=password_hash, country=country)
+        new_user = model.User(email=email, username=username, password=password_hash, country_code=country)
         db.session.add(new_user)
         db.session.commit()
         flash("User created successfully! Please log in.", "success")
