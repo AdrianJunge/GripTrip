@@ -43,10 +43,10 @@
     - [x] List participating trips in user profil
 
 # Rest of mandatory functionality
-- [ ] displaying and editing trip proposal details
-    - [ ] participants can see all details including the list of participants => central view of a trip proposal
-    - [ ] particpants with editing permissions can edit details
-    - [ ] editors can give editing permissions to other participants
+- [x] displaying and editing trip proposal details
+    - [x] participants can see all details including the list of participants => central view of a trip proposal
+    - [x] particpants with editing permissions can edit details
+    - [x] editors can give editing permissions to other participants
     - [x] editors can mark details as final => no longer open to discussion
         - [x] so every single detail can be open for discussion if not final - maybe add an own small message board for each detail with a number of messages for this detail indicating how much was already written about it?
         - [x] final marked details can not longer be edited
@@ -69,10 +69,10 @@
     - [ ] participants can leave trips
     - [ ] no access anymore to details and message board
     - [ ] participants that is the only editor cannot leave a trip if its not finalized or cancelled
-- [ ] closing trip proposals to new participants
-    - [ ] other users cannot join anymore
+- [x] closing trip proposals to new participants
+    - [x] other users cannot join anymore
 - [ ] finalizing or cancelling trip proposals
-    - [ ] editors can finalize or cancel trips
+    - [x] editors can finalize or cancel trips
         - open
         - closed_to_new_participants
         - finalized
@@ -85,10 +85,9 @@
     - [ ] trip becomes read only
         - [ ] no new messages, details not editable, no new participants can join, no longer discoverable by other users
     - [ ] participants can still access the details and the message board
-- [ ] every mention to a user in the application must link to their profile view
+- [x] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
 - [ ] Async changes of edit form when in parallel other users change details or finalize?
-
 
 # Models
 - [x] Users

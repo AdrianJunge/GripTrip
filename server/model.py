@@ -165,6 +165,16 @@ class Proposal(db.Model):
                 return participant.permission.value >= min_role.value
         return False
 
+    def get_participant(self, user):
+        for participant in self.participants:
+            if participant.user_id == user.id:
+                return participant
+        return None
+
+    def get_user_role(self, user):
+        p = self.get_participant(user)
+        return p.permission if p is not None else None
+
 
 class Message(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)

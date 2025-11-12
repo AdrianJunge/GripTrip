@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import current_user, login_required
 
 from . import db
@@ -141,7 +141,7 @@ def view_trip(trip_id):
         if getattr(m, "timestamp", None) is not None and m.timestamp.tzinfo is None:
             m.timestamp = m.timestamp.replace(tzinfo=datetime.timezone.utc)
 
-    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=now)
+    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=now, ProposalParticipantRole=model.ProposalParticipantRole)
 
 
 @bp.route("/trip/join/<int:trip_id>", methods=["POST"])
@@ -172,3 +172,59 @@ def join(trip_id):
     db.session.commit()
 
     return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+
+@bp.route("/trip/<int:trip_id>/participant/<int:user_id>/role", methods=["POST"])
+@login_required
+def change_participant_role(trip_id, user_id):
+    trip = model.Proposal.query.get_or_404(trip_id)
+
+    if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
+        return jsonify({"success": False, "error": "No access to this trip."}), 403
+
+    current_p = trip.get_participant(current_user)
+    target_user = model.User.query.get_or_404(user_id)
+    target_p = trip.get_participant(target_user)
+    if target_p is None:
+        return jsonify({"success": False, "error": "Target user is not a participant."}), 404
+
+    new_role_str = request.form.get('role') or (request.json and request.json.get('role'))
+    if not new_role_str:
+        return jsonify({"success": False, "error": "No role specified."}), 400
+
+    try:
+        new_role = model.ProposalParticipantRole[new_role_str.upper()]
+    except Exception:
+        return jsonify({"success": False, "error": "Invalid role specified."}), 400
+
+    if current_p and current_p.permission == model.ProposalParticipantRole.ADMIN:
+        if target_p.user_id == current_user.id and new_role != model.ProposalParticipantRole.ADMIN:
+            return jsonify({"success": False, "error": "Admins cannot change their own role."}), 403
+        allowed = True
+    elif current_p and current_p.permission == model.ProposalParticipantRole.EDITOR:
+        if target_p.permission == model.ProposalParticipantRole.ADMIN:
+            allowed = False
+        elif new_role == model.ProposalParticipantRole.ADMIN:
+            allowed = False
+        elif new_role.value < target_p.permission.value:
+            allowed = False
+        else:
+            allowed = (new_role == model.ProposalParticipantRole.EDITOR)
+    else:
+        allowed = False
+
+    if not allowed:
+        return jsonify({"success": False, "error": "You do not have permission to change this role."}), 403
+
+    old_role = target_p.permission.name if target_p.permission is not None else 'UNKNOWN'
+    target_p.permission = new_role
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "new_role": new_role.name,
+        "messages": [{
+            "category": "success",
+            "text": f"Participant role for {target_p.user.username} updated successfully from {old_role} to {new_role.name}."
+        }]
+    })

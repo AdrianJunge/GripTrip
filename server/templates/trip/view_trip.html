@@ -2,6 +2,7 @@
 
 {% block head %}
     <title>View Trip - {{ app_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='trip/trips.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -21,12 +22,13 @@
             {% endif %}
         </div>
         <div>
-            <a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" class="btn btn-primary">Edit Trip</a>
+            {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
+                <a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" class="btn btn-primary">Edit Trip</a>
+            {% endif %}
         </div>
     </div>
 
     <div class="mb-3">
-        <p class="mb-1">Participants: <strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></p>
         <p class="mb-1">Created by:
             <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
                 <strong>{{ trip.user.username }}</strong>
@@ -196,10 +198,54 @@
                     {% endif %}
                 </div>
             </div>
+
+            <div class="mb-3">
+                <h6 class="d-flex justify-content-between align-items-center">
+                    <span class="mb-1">Participants</span>
+                    <small class="text-muted"><strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></small>
+                </h6>
+                <div class="participant-list">
+                    {% set current_role = trip.get_user_role(current_user) %}
+                    {% for p in trip.participants %}
+                        <div class="participant-item" id="participant-{{ p.user.id }}">
+                            <div class="participant-avatar">{{ p.user.avatar }}</div>
+                            <div class="participant-name">
+                                <a class="link" href="{{ url_for('profile.view_profile', user_id=p.user.id) }}">{{ p.user.username }}</a>
+                            </div>
+                            <div class="participant-role me-2">
+                                <span class="badge bg-light text-dark" id="role-badge-{{ p.user.id }}">{{ p.permission.name.title() }}</span>
+                            </div>
+                            {% if p.user.id != current_user.id %}
+                                <div class="participant-action">
+                                    {% if current_role and current_role.name == 'ADMIN' %}
+                                        <select class="form-select form-select-sm role-select" data-user-id="{{ p.user.id }}">
+                                            {% for r in ['VIEWER','EDITOR','ADMIN'] %}
+                                                <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    {% elif current_role and current_role.name == 'EDITOR' %}
+                                        {% if p.permission.name == 'VIEWER' and p.user.id != current_user.id %}
+                                            <button type="button" class="btn btn-sm btn-outline-primary promote-btn" data-user-id="{{ p.user.id }}">Make Editor</button>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="participant-action">
+                                    <span class="text-muted">You</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <script src="{{ url_for('static', filename='js/trip/messages.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/trip/participants.js') }}"></script>
+    <script>
+        window.currentTripId = {{ trip.id }};
+    </script>
 {% endblock %}
