@@ -155,13 +155,7 @@ def view_trip(trip_id):
         flash("You do not have permission to view this trip.", "error")
         return redirect(url_for("main.index"))
 
-    now = datetime.datetime.now(datetime.timezone.utc)
-    # TODO: Remove this workaround when timestamps are always stored with timezone info
-    for m in messages:
-        if getattr(m, "timestamp", None) is not None and m.timestamp.tzinfo is None:
-            m.timestamp = m.timestamp.replace(tzinfo=datetime.timezone.utc)
-
-    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=now, ProposalParticipantRole=model.ProposalParticipantRole)
+    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=datetime.datetime.now(datetime.timezone.utc), ProposalParticipantRole=model.ProposalParticipantRole)
 
 
 @bp.route("/trip/join/<int:trip_id>", methods=["POST"])

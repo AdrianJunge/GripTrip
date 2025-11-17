@@ -5,7 +5,7 @@ import enum
 from typing import List, Optional, Tuple
 import flask_login
 from sqlalchemy.ext.mutable import MutableDict
-from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON, Float
+from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON, Float, event
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
@@ -69,7 +69,7 @@ class Proposal(db.Model):
     user: Mapped["User"] = relationship(back_populates="proposals")
     title: Mapped[Optional[str]] = mapped_column(String(512), default="", nullable=False)
     timestamp: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+        DateTime(timezone=True), server_default=func.now(), default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
     status: Mapped[ProposalStatus] = mapped_column(SQLAlchemyEnum(ProposalStatus), default=ProposalStatus.OPEN)
     max_participants: Mapped[Optional[int]] = mapped_column(Integer, default=1, nullable=False)
@@ -182,7 +182,8 @@ class Message(db.Model):
     user: Mapped["User"] = relationship()
     content: Mapped[str] = mapped_column(String(1024))
     timestamp: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+        DateTime(timezone=True), server_default=func.now(),
+        default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
     proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
     proposal: Mapped["Proposal"] = relationship(back_populates="messages")
@@ -193,6 +194,18 @@ class Message(db.Model):
     responses: Mapped[List["Message"]] = relationship(
         back_populates="response_to"
     )
+
+# for some reason mysql doesn't store timezone info properly so we need to ensure it's aware
+def _ensure_aware(dt):
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=datetime.timezone.utc)
+    return dt
+
+@event.listens_for(Message, "load")
+def _message_load(target, context):
+    target.timestamp = _ensure_aware(target.timestamp)
 
 class ProposalParticipantRole(enum.Enum):
     VIEWER = 1
