@@ -233,6 +233,7 @@ def change_participant_role(trip_id, user_id):
     except Exception:
         return jsonify({"success": False, "error": "Invalid role specified."}), 400
 
+    # Admins cannot change their own role so there is always at least one admin with inherent editing rights
     if current_p and current_p.permission == model.ProposalParticipantRole.ADMIN:
         if target_p.user_id == current_user.id and new_role != model.ProposalParticipantRole.ADMIN:
             return jsonify({"success": False, "error": "Admins cannot change their own role."}), 403
@@ -262,5 +263,72 @@ def change_participant_role(trip_id, user_id):
         "messages": [{
             "category": "success",
             "text": f"Participant role for {target_p.user.username} updated successfully from {old_role} to {new_role.name}."
+        }]
+    })
+
+
+@bp.route("/trip/<int:trip_id>/leave", methods=["POST"])
+@login_required
+def leave_trip(trip_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    participant = trip.get_participant(current_user)
+    if participant is None:
+        flash("You are not a participant in this trip.", "error")
+        return redirect(url_for("main.index"))
+
+    if trip.user_id == current_user.id:
+        flash("The creator of a trip cannot leave it.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    if participant.permission == model.ProposalParticipantRole.ADMIN:
+        flash("Admins cannot leave the trip.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    db.session.delete(participant)
+    db.session.commit()
+
+    flash("You have left the trip.", "success")
+    return redirect(url_for("main.index"))
+
+
+@bp.route("/trip/<int:trip_id>/post_message", methods=["POST"])
+@login_required
+def post_message(trip_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    content = request.form.get("message_content")
+    if not content:
+        return jsonify({"success": False, "error": "Message content cannot be empty."}), 400
+
+    new_message = model.Message(
+        proposal_id=trip.id,
+        user_id=current_user.id,
+        content=content,
+        response_to_id=request.form.get("response_to") or None,
+    )
+
+    db.session.add(new_message)
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "messages": [{
+            "category": "success",
+            "text": "Message posted successfully."
         }]
     })

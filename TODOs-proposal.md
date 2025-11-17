@@ -59,16 +59,10 @@
         - [x] no threads or replies needed
     - [x] Replies like in WhatsApp
         - [x] Clickable so it scrolls automatically to the original message
-- [ ] creating meetups
-    - [ ] participants with editing skills can set up meetups
-    - [ ] provide date, time and location
-        - bars
-        - social centers
-    - [ ] participants are able to see the list of scheduled meetups for every trip they participate
-- [ ] leave trips
-    - [ ] participants can leave trips
-    - [ ] no access anymore to details and message board
-    - [ ] participants that is the only editor cannot leave a trip if its not finalized or cancelled
+- [x] leave trips
+    - [x] participants can leave trips
+    - [x] no access anymore to details and message board
+    - [x] participants that is the only editor cannot leave a trip if its not finalized or cancelled
 - [x] closing trip proposals to new participants
     - [x] other users cannot join anymore
 - [ ] finalizing or cancelling trip proposals
@@ -84,7 +78,14 @@
     - [ ] only finalize if everything has been planned
     - [ ] trip becomes read only
         - [ ] no new messages, details not editable, no new participants can join, no longer discoverable by other users
+        - [ ] only editors can unfinalize the trip
     - [ ] participants can still access the details and the message board
+- [ ] creating meetups
+    - [ ] participants with editing skills can set up meetups
+    - [ ] provide date, time and location
+        - bars
+        - social centers
+    - [ ] participants are able to see the list of scheduled meetups for every trip they participate
 - [x] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
 - [ ] Async changes of edit form when in parallel other users change details or finalize?

@@ -55,3 +55,7 @@
 .participant-name {
     flex:1;
 }
+
+#leave-trip {
+    display:inline;
+}
