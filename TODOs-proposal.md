@@ -51,8 +51,8 @@
         - [x] so every single detail can be open for discussion if not final - maybe add an own small message board for each detail with a number of messages for this detail indicating how much was already written about it?
         - [x] final marked details can not longer be edited
             - [x] but can editors still change the mark of details from final to open?
-- [ ] posting to message boards
-    - [ ] participants can post and see other messages
+- [x] posting to message boards
+    - [x] participants can post and see other messages
         => when a user posts a message to the message board of a trip proposal, the form should include a hidden field with the identifier of the trip proposal
     - [x] messages are shown from most recent to oldest
         - [x] including name of author and timestamp
@@ -86,6 +86,8 @@
         - bars
         - social centers
     - [ ] participants are able to see the list of scheduled meetups for every trip they participate
+- [ ] CSRF protections for every POST form
+    => with `{{ csrf_token() }}`
 - [x] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
 - [ ] Async changes of edit form when in parallel other users change details or finalize?

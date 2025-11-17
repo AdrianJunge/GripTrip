@@ -313,7 +313,8 @@ def post_message(trip_id):
 
     content = request.form.get("message_content")
     if not content:
-        return jsonify({"success": False, "error": "Message content cannot be empty."}), 400
+        flash("Message content cannot be empty.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
     new_message = model.Message(
         proposal_id=trip.id,
@@ -325,10 +326,5 @@ def post_message(trip_id):
     db.session.add(new_message)
     db.session.commit()
 
-    return jsonify({
-        "success": True,
-        "messages": [{
-            "category": "success",
-            "text": "Message posted successfully."
-        }]
-    })
+    flash("Message posted successfully.", "success")
+    return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#message-{new_message.id}")

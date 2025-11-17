@@ -78,9 +78,9 @@
         <button type="button" id="reply-cancel" class="reply-cancel" title="Cancel reply">✕</button>
     </div>
 
-    <form id="message-form">
+    <form action="{{ url_for('trip.post_message', trip_id=trip.id) }}" method="post">
         <input type="hidden" id="response_to" name="response_to" value="">
-        <textarea id="message-input" name="content" rows="3" placeholder="Write a message..."></textarea>
+        <textarea id="message-input" name="message_content" rows="3" placeholder="Write a message..."></textarea>
         <div class="composer-actions">
             <button type="submit" id="post-message" class="post-message">Post Message</button>
         </div>

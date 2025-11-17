@@ -52,6 +52,7 @@
     justify-content:center;
     border-radius:50%;
 }
+
 .participant-name {
     flex:1;
 }
