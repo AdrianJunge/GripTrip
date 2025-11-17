@@ -11,16 +11,16 @@ bp = Blueprint("main", __name__)
 @bp.route("/")
 @login_required
 def index():
-    trips = (
-        model.Proposal.query
+    query = (
+        db.select(model.Proposal)
         # can't use .participant_count directly in filter as it is a @property and only works for already loaded ORM objects
         .outerjoin(model.Proposal.participants)
         .group_by(model.Proposal.id)
         .having(func.count(model.ProposalParticipant.user_id) < model.Proposal.max_participants)
         .filter(model.Proposal.status == model.ProposalStatus.OPEN)
         .order_by(model.Proposal.timestamp.desc())
-        .all()
     )
+    trips = db.session.execute(query).scalars().all()
 
     user_country = current_user.country
     try:

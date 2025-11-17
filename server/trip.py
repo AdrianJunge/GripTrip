@@ -76,7 +76,14 @@ def create_trip():
 @bp.route("/trip/edit/<int:trip_id>", methods=["GET", "POST"])
 @login_required
 def edit_trip(trip_id):
-    trip = model.Proposal.query.get_or_404(trip_id)
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
 
     if not trip.has_permission(current_user, model.ProposalParticipantRole.EDITOR):
         flash("You do not have permission to edit this trip.", "error")
@@ -128,8 +135,21 @@ def edit_trip(trip_id):
 @bp.route("/trip/<int:trip_id>")
 @login_required
 def view_trip(trip_id):
-    trip = model.Proposal.query.get_or_404(trip_id)
-    messages = model.Message.query.filter_by(proposal_id=trip.id).order_by(model.Message.timestamp.asc()).all()
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    query = (
+        db.select(model.Message)
+        .where(model.Message.proposal_id == trip.id)
+        .order_by(model.Message.timestamp.asc())
+    )
+    messages = db.session.execute(query).scalars().all()
 
     if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
         flash("You do not have permission to view this trip.", "error")
@@ -147,16 +167,25 @@ def view_trip(trip_id):
 @bp.route("/trip/join/<int:trip_id>", methods=["POST"])
 @login_required
 def join(trip_id):
-    trip = model.Proposal.query.get_or_404(trip_id)
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
 
     if trip.participant_count >= trip.max_participants:
         flash("This trip is already full.", "error")
         return redirect(url_for("main.index"))
 
-    existing_participant = model.ProposalParticipant.query.filter_by(
-        proposal_id=trip.id,
-        user_id=current_user.id
-    ).first()
+    query = (
+        db.select(model.ProposalParticipant)
+        .where(model.ProposalParticipant.proposal_id == trip.id)
+        .where(model.ProposalParticipant.user_id == current_user.id)
+    )
+    existing_participant = db.session.execute(query).scalar_one_or_none()
 
     if existing_participant:
         flash("You are already a participant in this trip.", "info")
@@ -177,13 +206,26 @@ def join(trip_id):
 @bp.route("/trip/<int:trip_id>/participant/<int:user_id>/role", methods=["POST"])
 @login_required
 def change_participant_role(trip_id, user_id):
-    trip = model.Proposal.query.get_or_404(trip_id)
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
 
     if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
         return jsonify({"success": False, "error": "No access to this trip."}), 403
 
     current_p = trip.get_participant(current_user)
-    target_user = model.User.query.get_or_404(user_id)
+    query = (
+        db.select(model.User)
+        .where(model.User.id == user_id)
+    )
+    target_user = db.session.execute(query).scalar_one_or_none()
+    if target_user is None:
+        return jsonify({"success": False, "error": "Target user not found."}), 404
     target_p = trip.get_participant(target_user)
     if target_p is None:
         return jsonify({"success": False, "error": "Target user is not a participant."}), 404
