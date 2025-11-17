@@ -14,7 +14,6 @@ body {
 }
 
 .container {
-    max-width: 75%;
     margin: 0 auto;
     padding: 12px 16px;
     width: 100%;
@@ -24,6 +23,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
 }
 
 .main-wrapper {
@@ -39,6 +39,9 @@ body {
     position: sticky;
     top: 0;
     z-index: 10000;
+    min-height: 10%;
+    max-height: 10%;
+    align-items: center;
 }
 
 .footer {
@@ -53,4 +56,8 @@ body {
 
 .main-feed {
     grid-column: 2;
+}
+
+.header .container nav.navbar {
+    flex: 1 1 auto;
 }
