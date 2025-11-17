@@ -18,7 +18,7 @@ def index():
         .group_by(model.Proposal.id)
         .having(func.count(model.ProposalParticipant.user_id) < model.Proposal.max_participants)
         .filter(model.Proposal.status == model.ProposalStatus.OPEN)
-        .order_by(model.Proposal.timestamp.desc())
+        .order_by(model.Proposal.timestamp_raw.desc())
     )
     trips = db.session.execute(query).scalars().all()
 

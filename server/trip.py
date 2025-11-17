@@ -147,7 +147,7 @@ def view_trip(trip_id):
     query = (
         db.select(model.Message)
         .where(model.Message.proposal_id == trip.id)
-        .order_by(model.Message.timestamp.asc())
+        .order_by(model.Message.timestamp_raw.asc())
     )
     messages = db.session.execute(query).scalars().all()
 

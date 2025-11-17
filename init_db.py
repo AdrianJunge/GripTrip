@@ -71,46 +71,46 @@ def init_database():
             proposal=testuser_trip,
             user=testuser,
             content="Welcome to the test trip!",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)
         )
         message2 = Message(
             proposal=testuser_trip,
             user=mary,
             content="This is a reply to the first message.",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-1),
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-1),
             response_to=message
         )
         message3 = Message(
             proposal=testuser_trip,
             user=mary,
             content="This is another message.",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-2),
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-2),
         )
         message4 = Message(
             proposal=testuser_trip,
             user=testuser,
             content="Replying to Mary's message.",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-3),
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-3),
             response_to=message2
         )
         message5 = Message(
             proposal=testuser_trip,
             user=testuser,
             content="Another reply to the first message but this time its very very long to test how the UI handles long messages. " * 5,
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-4),            
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-4),            
             response_to=message
         )
         message6 = Message(
             proposal=testuser_trip,
             user=mary,
             content="Continuing the discussion here.",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-5),
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-5),
         )
         message7 = Message(
             proposal=testuser_trip,
             user=mary,
             content="Adding more to the conversation.",
-            timestamp=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-6),
+            timestamp_raw=datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1, hours=-6),
             response_to=message5,
         )
         

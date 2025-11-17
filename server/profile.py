@@ -27,7 +27,7 @@ def view_profile(user_id):
         .join(model.Proposal.participants)
         .filter(model.ProposalParticipant.user_id == user.id)
         .filter(model.Proposal.user_id != user.id)
-        .order_by(model.Proposal.timestamp.desc())
+        .order_by(model.Proposal.timestamp_raw.desc())
     )
     trips_joined = db.session.execute(query).scalars().all()
     return render_template("profile/view_profile.html", user=user, trips_joined=trips_joined)
