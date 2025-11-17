@@ -223,15 +223,14 @@
                             {% if p.user.id != current_user.id %}
                                 <div class="participant-action">
                                     {% if current_role and current_role.name == 'ADMIN' %}
-                                        <select class="form-select form-select-sm role-select" data-user-id="{{ p.user.id }}">
-                                            {% for r in ['VIEWER','EDITOR','ADMIN'] %}
-                                                <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    {% elif current_role and current_role.name == 'EDITOR' %}
-                                        {% if p.permission.name == 'VIEWER' and p.user.id != current_user.id %}
-                                            <button type="button" class="btn btn-sm btn-outline-primary promote-btn" data-user-id="{{ p.user.id }}">Make Editor</button>
-                                        {% endif %}
+                                        <form action="{{ url_for('trip.change_participant_role', trip_id=trip.id, user_id=p.user.id) }}"
+                                            method="post" style="display:inline;">
+                                            <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                {% for r in ['VIEWER','EDITOR','ADMIN'] %}
+                                                    <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </form>
                                     {% endif %}
                                 </div>
                             {% else %}

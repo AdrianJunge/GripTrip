@@ -1,5 +1,5 @@
 import datetime
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 
 from . import db
@@ -210,7 +210,8 @@ def change_participant_role(trip_id, user_id):
         return redirect(url_for("main.index"))
 
     if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
-        return jsonify({"success": False, "error": "No access to this trip."}), 403
+        flash("No access to this trip.", "error")
+        return redirect(url_for("main.index"))
 
     current_p = trip.get_participant(current_user)
     query = (
@@ -219,24 +220,28 @@ def change_participant_role(trip_id, user_id):
     )
     target_user = db.session.execute(query).scalar_one_or_none()
     if target_user is None:
-        return jsonify({"success": False, "error": "Target user not found."}), 404
+        flash("Target user not found.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
     target_p = trip.get_participant(target_user)
     if target_p is None:
-        return jsonify({"success": False, "error": "Target user is not a participant."}), 404
-
+        flash("Target user is not a participant.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
     new_role_str = request.form.get('role') or (request.json and request.json.get('role'))
     if not new_role_str:
-        return jsonify({"success": False, "error": "No role specified."}), 400
+        flash("No role specified.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
     try:
         new_role = model.ProposalParticipantRole[new_role_str.upper()]
     except Exception:
-        return jsonify({"success": False, "error": "Invalid role specified."}), 400
+        flash("Invalid role specified.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
     # Admins cannot change their own role so there is always at least one admin with inherent editing rights
     if current_p and current_p.permission == model.ProposalParticipantRole.ADMIN:
         if target_p.user_id == current_user.id and new_role != model.ProposalParticipantRole.ADMIN:
-            return jsonify({"success": False, "error": "Admins cannot change their own role."}), 403
+            flash("Admins cannot change their own role.", "error")
+            return redirect(url_for("trip.view_trip", trip_id=trip.id))
         allowed = True
     elif current_p and current_p.permission == model.ProposalParticipantRole.EDITOR:
         if target_p.permission == model.ProposalParticipantRole.ADMIN:
@@ -251,20 +256,15 @@ def change_participant_role(trip_id, user_id):
         allowed = False
 
     if not allowed:
-        return jsonify({"success": False, "error": "You do not have permission to change this role."}), 403
+        flash("You do not have permission to change this role.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
     old_role = target_p.permission.name if target_p.permission is not None else 'UNKNOWN'
     target_p.permission = new_role
     db.session.commit()
 
-    return jsonify({
-        "success": True,
-        "new_role": new_role.name,
-        "messages": [{
-            "category": "success",
-            "text": f"Participant role for {target_p.user.username} updated successfully from {old_role} to {new_role.name}."
-        }]
-    })
+    flash(f"Participant role for {target_p.user.username} updated successfully from {old_role} to {new_role.name}.", "success")
+    return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
 
 @bp.route("/trip/<int:trip_id>/leave", methods=["POST"])
