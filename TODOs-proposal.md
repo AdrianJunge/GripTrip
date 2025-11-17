@@ -7,7 +7,6 @@
 - [ ] Which special attributes might be needed for Skiing??
 - [ ] discuss with teachers how many points you could get with the features you plan to implement
 
-
 # Mandatory functionality
 - [x] managing user accounts
     - [x] users can create accounts
@@ -15,11 +14,9 @@
     - [x] users can logout
     - [x] all controllers/views only accessible by authenticated users (test this one in the very end)
         - [x] exception is the landing page and ressources needed to create accounts and login
-
 - [x] displaying and editing user profiles
     - [x] users can edit a short description/bio of themselves
     - [x] other users can read the bio
-
 - [x] creating trip proposals
     - [x] users can create new trip proposals => they become a participant of it and have editing permissions
         - [x] maximum number of participants has to be set by creation
@@ -30,8 +27,6 @@
     - [x] view trip alle details anzeigen inklusive "final" vs "not final"
     - [x] check validity of given attributes
         - e.g. end-date > start-date, budget is float etc
-
-
 - [x] browsing, joining and leaving trip proposals
     - [x] users can see list of trip proposals (from other users and still accepting new participants)
         - [x] with current details and number of participants joined vs max participants allowed
@@ -65,7 +60,7 @@
     - [x] participants that is the only editor cannot leave a trip if its not finalized or cancelled
 - [x] closing trip proposals to new participants
     - [x] other users cannot join anymore
-- [ ] finalizing or cancelling trip proposals
+- [x] finalizing or cancelling trip proposals
     - [x] editors can finalize or cancel trips
         - open
         - closed_to_new_participants
@@ -75,11 +70,14 @@
         - cancelled
             - no edit/messaging anymore possible
             - see details still possible
-    - [ ] only finalize if everything has been planned
-    - [ ] trip becomes read only
-        - [ ] no new messages, details not editable, no new participants can join, no longer discoverable by other users
-        - [ ] only editors can unfinalize the trip
-    - [ ] participants can still access the details and the message board
+    - [x] only finalize if everything has been planned
+    - [x] trip becomes read only
+        - [x] no new messages
+        - [x] details not editable
+        - [x] no new participants can join
+        - [x] no longer discoverable by other users
+        - [x] only editors can unfinalize the trip
+    - [x] participants can still access the details and the message board
 - [ ] creating meetups
     - [ ] participants with editing skills can set up meetups
     - [ ] provide date, time and location
@@ -88,6 +86,11 @@
     - [ ] participants are able to see the list of scheduled meetups for every trip they participate
 - [ ] CSRF protections for every POST form
     => with `{{ csrf_token() }}`
+- [ ] Look if every attribute we have defined in the models.py is actually used
+    => e.g. `final_date` and `final_departure_location` are currently unused - either remove or use them
+- [ ] Fix Bugs
+    - Finalize button in edit view redirected nicht zu view_trip sobald der trip final gesetzt ist
+    - Admins sollten noch den status ändern können auch wenn trip finalized ist
 - [x] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
 - [ ] Async changes of edit form when in parallel other users change details or finalize?

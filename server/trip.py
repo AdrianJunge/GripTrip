@@ -88,8 +88,23 @@ def edit_trip(trip_id):
     if not trip.has_permission(current_user, model.ProposalParticipantRole.EDITOR):
         flash("You do not have permission to edit this trip.", "error")
         return redirect(url_for("main.index"))
+    
+    required_fields = [
+        'destinations',
+        'dates',
+        'activities',
+        'accommodation',
+        'transportation',
+        'departure_locations',
+        'budget',
+    ]
+    all_final = all(trip.is_final(f) for f in required_fields)
 
     if request.method == "POST":
+        if trip.status in (model.ProposalStatus.FINALIZED, model.ProposalStatus.CANCELLED):
+            flash("This trip is finalized or cancelled and cannot be edited.", "error")
+            return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
         if request.form.get('toggle_final'):
             field = request.form.get('toggle_final')
             action = request.form.get('toggle_action')
@@ -113,12 +128,19 @@ def edit_trip(trip_id):
             trip.title = trip_name
             trip.max_participants = int(max_participants)
             status_str = request.form.get("status")
+
             if status_str:
                 try:
-                    trip.status = model.ProposalStatus[status_str]
+                    new_status = model.ProposalStatus[status_str]
                 except Exception:
                     flash("Invalid status selected", "error")
                     return redirect(url_for("trip.edit_trip", trip_id=trip.id))
+
+                if new_status == model.ProposalStatus.FINALIZED and not all_final:
+                    flash("Cannot mark trip as FINALIZED: not all details are finalized.", "error")
+                    return redirect(url_for("trip.edit_trip", trip_id=trip.id))
+
+                trip.status = new_status
         except Exception as e:
             flash(str(e), "error")
             return redirect(url_for("trip.edit_trip", trip_id=trip.id))
@@ -129,7 +151,12 @@ def edit_trip(trip_id):
         db.session.commit()
         return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
-    return render_template("trip/edit_trip.html", trip=trip, ProposalStatus=model.ProposalStatus)
+    return render_template(
+        "trip/edit_trip.html",
+        trip=trip,
+        ProposalStatus=model.ProposalStatus,
+        all_final=all_final,
+    )
 
 
 @bp.route("/trip/<int:trip_id>")
@@ -168,6 +195,10 @@ def join(trip_id):
     trip = db.session.execute(query).scalar_one_or_none()
     if trip is None:
         flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    if trip.status != model.ProposalStatus.OPEN:
+        flash("This trip is not open for joining.", "error")
         return redirect(url_for("main.index"))
 
     if trip.participant_count >= trip.max_participants:
@@ -307,9 +338,18 @@ def post_message(trip_id):
         .where(model.Proposal.id == trip_id)
     )
     trip = db.session.execute(query).scalar_one_or_none()
+
+    if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
+        flash("You do not have permission to post messages in this trip.", "error")
+        return redirect(url_for("main.index"))
+
     if trip is None:
         flash(f"Trip with id {trip_id} not found.", "error")
         return redirect(url_for("main.index"))
+
+    if trip.status in (model.ProposalStatus.FINALIZED, model.ProposalStatus.CANCELLED):
+        flash("Cannot post messages to a finalized or cancelled trip.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
     content = request.form.get("message_content")
     if not content:

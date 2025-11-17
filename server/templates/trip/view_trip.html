@@ -23,7 +23,15 @@
         </div>
         <div>
             {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
-                <a href="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" class="btn btn-primary">Edit Trip</a>
+                <form action="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
+                    <button class="btn btn-primary"
+                        {% if trip.status == trip.status.__class__.FINALIZED or trip.status == trip.status.__class__.CANCELLED %}
+                            disabled
+                        {% endif %}
+                    >
+                        Edit Trip
+                    </button>
+                </form>
             {% endif %}
             <form action="{{ url_for('trip.leave_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
                 <button type="submit" class="btn btn-danger">
