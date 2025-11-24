@@ -1,36 +1,39 @@
 <div id="trip-{{ trip.id }}" class="trip-card" search-terms='{{ ([trip.title] + trip.destinations) | tojson }}'>
-    <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
-    <div class="trip-card-body">
-        <p class="trip-dest">Destinations: </p>
-            {% if trip.destinations | length == 0 %}
-                <em>No destinations specified.</em>
-            {% else %}
-                {% for destination in trip.destinations %}
-                    <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            {% endif %}
-        </p>
-        <p class="trip-dates">Dates: 
-            {% if trip.dates | length == 0 %}
-                <em>No dates specified.</em>
-            {% else %}
-                {% for start, end in trip.dates %}
-                    <span>{{ start }} - {{ end }}</span>{% if not loop.last %}, {% endif %}
-                {% endfor %}
-            {% endif %}
-        </p>
-        <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
-            <p class="{% if trip.participants|length >= trip.max_participants %}text-danger{% endif %}">
-                By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )
+    <div>
+        <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
+        <div class="trip-card-body">
+            <p class="trip-dest">Destinations: </p>
+                {% if trip.destinations | length == 0 %}
+                    <em>No destinations specified.</em>
+                {% else %}
+                    {% for destination in trip.destinations %}
+                        <span>{{ destination }}</span>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
             </p>
-        </a>
+            <p class="trip-dates">Dates: 
+                {% if trip.dates | length == 0 %}
+                    <em>No dates specified.</em>
+                {% else %}
+                    {% for start, end in trip.dates %}
+                        <span>{{ start }} - {{ end }}</span>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+            <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
+                <p class="{% if trip.participants|length >= trip.max_participants %}text-danger{% endif %}">
+                    By {{ trip.user.username }} ( {{ trip.participants|length }}/{{ trip.max_participants }} )
+                </p>
+            </a>
+        </div>
     </div>
+
 
     {% if current_user.id != trip.user.id and (trip.participants | selectattr("user_id", "equalto", current_user.id) | list | length) == 0 %}
         <form action="{{ url_for('trip.join', trip_id=trip.id) }}" method="post">
             <button type="submit" class="btn btn-primary trip-card-button" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
         </form>
     {% else %}
-        <a href="{{ url_for('trip.view_trip', trip_id=trip.id) }}" class="btn btn-secondary trip-card-button">View Trip</a>
+        <a href="{{ url_for('trip.view_trip', trip_id=trip.id) }}" class="trip-button">View Trip</a>
     {% endif %}
 </div>
