@@ -17,7 +17,7 @@
 
 {% block content %}
 
-<div> 
+<div class="dbm-container"> 
     <!-- Shold replace with a html template for leaflet-->
     <div class= "map-wrapper">
         <div id="map"
@@ -27,7 +27,7 @@
         data-country="{{ user_country }}"
         {% endif %}>
         </div>
-        <div id="map-margin">hello</div>
+        <div id="map-margin"></div>
     </div>
     {% include "dashboard/dashboard.html" with context %}
 </div>

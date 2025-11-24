@@ -31,7 +31,7 @@
 
     {% if current_user.id != trip.user.id and (trip.participants | selectattr("user_id", "equalto", current_user.id) | list | length) == 0 %}
         <form action="{{ url_for('trip.join', trip_id=trip.id) }}" method="post">
-            <button type="submit" class="btn btn-primary trip-card-button" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
+            <button type="submit" class="trip-button" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
         </form>
     {% else %}
         <a href="{{ url_for('trip.view_trip', trip_id=trip.id) }}" class="trip-button">View Trip</a>
