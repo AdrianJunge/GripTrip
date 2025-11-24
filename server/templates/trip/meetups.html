@@ -1,0 +1,74 @@
+<div class="mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <strong>Meetups</strong>
+            {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
+                <a class="btn btn-sm btn-primary" href="{{ url_for('trip.create_meetup_page', trip_id=trip.id) }}">Create meetup</a>
+            {% endif %}
+        </div>
+        <div class="card-body">
+            {% if meetups %}
+                {% for m in meetups %}
+                    <div class="card mb-3" id="meeting-{{ m.id }}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>{{ m.title }}</strong>
+                                    <div class="text-muted small">{{ m.date.strftime('%Y-%m-%d %H:%M') }}{% if m.location %} · {{ m.location }}{% endif %}</div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="small">By <a class="link" href="{{ url_for('profile.view_profile', user_id=m.created_by_user.id) }}">{{ m.created_by_user.username }}</a></div>
+                                    <div class="small text-muted">{{ m.participants|length }} participants</div>
+                                    <div class="mt-1">
+                                        {% set is_participant = meetup_membership.get(m.id, False) %}
+
+                                        {% if is_participant %}
+                                            <form action="{{ url_for('trip.leave_meetup', trip_id=trip.id, meetup_id=m.id) }}" method="post" style="display:inline">
+                                                <button class="btn btn-sm btn-outline-danger">Leave</button>
+                                            </form>
+                                        {% else %}
+                                            <form action="{{ url_for('trip.join_meetup', trip_id=trip.id, meetup_id=m.id) }}" method="post" style="display:inline">
+                                                <button class="btn btn-sm btn-outline-primary">Join</button>
+                                            </form>
+                                        {% endif %}
+
+                                        {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) or m.created_by_user_id == current_user.id %}
+                                            <a class="btn btn-sm btn-outline-secondary ms-1" href="{{ url_for('trip.edit_meetup', trip_id=trip.id, meetup_id=m.id) }}">Edit</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if m.description %}
+                                <div class="mt-2">{{ m.description }}</div>
+                            {% endif %}
+
+                                <div class="mt-2">
+                                    <div class="card-header d-flex justify-content-between align-items-center p-2">
+                                        <div class="small text-muted">Participants <span class="badge bg-light text-dark ms-2">{{ m.participants|length }}</span></div>
+                                        <button class="btn btn-sm btn-link" type="button" data-bs-toggle="collapse" data-bs-target="#participants-{{ m.id }}" aria-expanded="false" aria-controls="participants-{{ m.id }}">
+                                            <i class="bi bi-chevron-down"></i>
+                                        </button>
+                                    </div>
+                                    <div class="card card-body collapse mt-2" id="participants-{{ m.id }}">
+                                        <div class="d-flex flex-wrap">
+                                            {% for mp in m.participants %}
+                                                <div class="me-3 mb-3 text-center">
+                                                    <a class="link" href="{{ url_for('profile.view_profile', user_id=mp.user.id) }}">
+                                                        <div class="avatar badge bg-secondary">{{ mp.user.avatar }}</div>
+                                                        <div class="small">{{ mp.user.username }}</div>
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-muted">No meetups scheduled</div>
+            {% endif %}
+        </div>
+    </div>
+</div>

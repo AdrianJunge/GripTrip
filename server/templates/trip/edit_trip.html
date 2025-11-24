@@ -112,7 +112,7 @@
                     <input name="activity" class="form-control tagify {% if trip.is_final('activities') %}opacity-50{% endif %}" placeholder="Add activities" value="{{ trip.activities|join(',') if trip.activities else '' }}" {% if trip.is_final('activities') %}disabled{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('activities') else 'success' }} btn-sm toggle-final-btn" data-field="activities" data-action="{{ 'unfinalize' if trip.is_final('activities') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('activities') else 'Finalize' }}</button>
                 </div>
-                <div class="form-text">Optional activities (comma/enter separated).</div>
+                <div class="form-text">Optional activities</div>
             </div>
 
             <div class="mb-3">
@@ -120,7 +120,7 @@
                     <input name="departure_location" class="form-control tagify {% if trip.is_final('departure_locations') %}opacity-50{% endif %}" placeholder="Add departure locations" value="{{ trip.departure_locations|join(',') if trip.departure_locations else '' }}" {% if trip.is_final('departure_locations') %}disabled{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('departure_locations') else 'success' }} btn-sm toggle-final-btn" data-field="departure_locations" data-action="{{ 'unfinalize' if trip.is_final('departure_locations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('departure_locations') else 'Finalize' }}</button>
                 </div>
-                <div class="form-text">Optional departure locations.</div>
+                <div class="form-text">Optional departure locations</div>
             </div>
         </div>
     </div>

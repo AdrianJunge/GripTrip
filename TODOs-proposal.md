@@ -78,12 +78,12 @@
         - [x] no longer discoverable by other users
         - [x] only editors can unfinalize the trip
     - [x] participants can still access the details and the message board
-- [ ] creating meetups
-    - [ ] participants with editing skills can set up meetups
-    - [ ] provide date, time and location
+- [x] creating meetups
+    - [x] participants with editing skills can set up meetups
+    - [x] provide date, time and location
         - bars
         - social centers
-    - [ ] participants are able to see the list of scheduled meetups for every trip they participate
+    - [x] participants are able to see the list of scheduled meetups for every trip they participate
 - [ ] CSRF protections for every POST form
     => with `{{ csrf_token() }}`
 - [ ] Look if every attribute we have defined in the models.py is actually used
@@ -93,7 +93,6 @@
     - Admins sollten noch den status ändern können auch wenn trip finalized ist
 - [x] every mention to a user in the application must link to their profile view
     - search for ".username" in the application code
-- [ ] Async changes of edit form when in parallel other users change details or finalize?
 
 # Models
 - [x] Users

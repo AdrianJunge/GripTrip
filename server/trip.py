@@ -178,11 +178,31 @@ def view_trip(trip_id):
     )
     messages = db.session.execute(query).scalars().all()
 
+    query = (
+        db.select(model.Meetup)
+        .where(model.Meetup.proposal_id == trip.id)
+        .order_by(model.Meetup.date_raw.asc())
+    )
+    meetups = db.session.execute(query).scalars().all()
+
+    meetup_membership = {}
+    for m in meetups:
+        member_ids = {mp.user_id for mp in m.participants}
+        meetup_membership[m.id] = (current_user.id in member_ids)
+
     if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
         flash("You do not have permission to view this trip.", "error")
         return redirect(url_for("main.index"))
 
-    return render_template("trip/view_trip.html", trip=trip, messages=messages, now=datetime.datetime.now(datetime.timezone.utc), ProposalParticipantRole=model.ProposalParticipantRole)
+    return render_template(
+        "trip/view_trip.html",
+        trip=trip,
+        messages=messages,
+        meetups=meetups,
+        meetup_membership=meetup_membership,
+        now=datetime.datetime.now(datetime.timezone.utc),
+        ProposalParticipantRole=model.ProposalParticipantRole,
+    )
 
 
 @bp.route("/trip/join/<int:trip_id>", methods=["POST"])
@@ -368,3 +388,223 @@ def post_message(trip_id):
 
     flash("Message posted successfully.", "success")
     return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#message-{new_message.id}")
+
+
+@bp.route("/trip/<int:trip_id>/create_meeting", methods=["POST"])
+@login_required
+def create_meeting(trip_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    if not trip.has_permission(current_user, model.ProposalParticipantRole.EDITOR):
+        flash("You do not have permission to create meetings for this trip.", "error")
+        return redirect(url_for("main.index"))
+
+    title = request.form.get("meeting_title")
+    scheduled_time_str = request.form.get("scheduled_time")
+    location = request.form.get("location") or None
+    description = request.form.get("description") or None
+
+    if not title or not scheduled_time_str:
+        flash("Mandatory fields are missing", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    try:
+        scheduled_time = datetime.datetime.fromisoformat(scheduled_time_str)
+    except ValueError:
+        flash("Invalid date and time format.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    new_meeting = model.Meetup(
+        proposal_id=trip.id,
+        title=title,
+        date_raw=scheduled_time,
+        location=location or "",
+        description=description or "",
+        created_by_user_id=current_user.id,
+    )
+    meeting_participant = model.MeetupParticipant(
+        user_id=current_user.id,
+        meetup=new_meeting,
+    )
+    new_meeting.participants.append(meeting_participant)
+
+    db.session.add(new_meeting)
+    db.session.add(meeting_participant)
+    db.session.commit()
+
+    flash(f"Meeting created successfully for the date {scheduled_time.strftime('%Y-%m-%d %H:%M')}.", "success")
+    return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#meeting-{new_meeting.id}")
+
+
+@bp.route("/trip/<int:trip_id>/meetup/<int:meetup_id>/join", methods=["POST"])
+@login_required
+def join_meetup(trip_id, meetup_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    query = (
+        db.select(model.Meetup)
+        .where(model.Meetup.id == meetup_id)
+        .where(model.Meetup.proposal_id == trip.id)
+    )
+    meetup = db.session.execute(query).scalar_one_or_none()
+    if meetup is None:
+        flash("Meetup not found.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    if not trip.has_permission(current_user, model.ProposalParticipantRole.VIEWER):
+        flash("You do not have permission to join this meetup.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    query = (
+        db.select(model.MeetupParticipant)
+        .where(model.MeetupParticipant.meetup_id == meetup.id)
+        .where(model.MeetupParticipant.user_id == current_user.id)
+    )
+    existing = db.session.execute(query).scalar_one_or_none()
+    if existing:
+        flash("You are already participating in this meetup.", "info")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#meeting-{meetup.id}")
+
+    new_participant = model.MeetupParticipant(
+        meetup_id=meetup.id,
+        user_id=current_user.id,
+    )
+    meetup.participants.append(new_participant)
+    db.session.add(new_participant)
+    db.session.commit()
+
+    flash("You joined the meetup.", "success")
+    return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#meeting-{meetup.id}")
+
+
+@bp.route("/trip/<int:trip_id>/meetup/<int:meetup_id>/leave", methods=["POST"])
+@login_required
+def leave_meetup(trip_id, meetup_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    query = (
+        db.select(model.Meetup)
+        .where(model.Meetup.id == meetup_id)
+        .where(model.Meetup.proposal_id == trip.id)
+    )
+    meetup = db.session.execute(query).scalar_one_or_none()
+    if meetup is None:
+        flash("Meetup not found.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    query = (
+        db.select(model.MeetupParticipant)
+        .where(model.MeetupParticipant.meetup_id == meetup.id)
+        .where(model.MeetupParticipant.user_id == current_user.id)
+    )
+    participant = db.session.execute(query).scalar_one_or_none()
+    if participant is None:
+        flash("You are not a participant in this meetup.", "info")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    if meetup.created_by_user_id == current_user.id:
+        flash("The creator of a meetup cannot leave it.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    db.session.delete(participant)
+    db.session.commit()
+
+    flash("You have left the meetup.", "success")
+    return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+
+@bp.route("/trip/<int:trip_id>/meetup/create", methods=["GET"])
+@login_required
+def create_meetup_page(trip_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    if not trip.has_permission(current_user, model.ProposalParticipantRole.EDITOR):
+        flash("You do not have permission to create meetups for this trip.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    return render_template("trip/create_meetup.html", trip=trip)
+
+
+@bp.route("/trip/<int:trip_id>/meetup/<int:meetup_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_meetup(trip_id, meetup_id):
+    query = (
+        db.select(model.Proposal)
+        .where(model.Proposal.id == trip_id)
+    )
+    trip = db.session.execute(query).scalar_one_or_none()
+    if trip is None:
+        flash(f"Trip with id {trip_id} not found.", "error")
+        return redirect(url_for("main.index"))
+
+    query = (
+        db.select(model.Meetup)
+        .where(model.Meetup.id == meetup_id)
+        .where(model.Meetup.proposal_id == trip.id)
+    )
+    meetup = db.session.execute(query).scalar_one_or_none()
+    if meetup is None:
+        flash("Meetup not found.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    if not (
+        trip.has_permission(current_user, model.ProposalParticipantRole.EDITOR)
+        or meetup.created_by_user_id == current_user.id
+    ):
+        flash("You do not have permission to edit this meetup.", "error")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+
+    if request.method == "POST":
+        title = request.form.get("meeting_title")
+        scheduled_time_str = request.form.get("scheduled_time")
+        location = request.form.get("location") or None
+        description = request.form.get("description") or None
+
+        if not title or not scheduled_time_str:
+            flash("Mandatory fields are missing", "error")
+            return redirect(url_for("trip.edit_meetup", trip_id=trip.id, meetup_id=meetup.id))
+
+        try:
+            scheduled_time = datetime.datetime.fromisoformat(scheduled_time_str)
+        except ValueError:
+            flash("Invalid date and time format.", "error")
+            return redirect(url_for("trip.edit_meetup", trip_id=trip.id, meetup_id=meetup.id))
+
+        meetup.title = title
+        meetup.date_raw = scheduled_time
+        meetup.location = location or ""
+        meetup.description = description or ""
+
+        db.session.commit()
+        flash("Meetup updated successfully.", "success")
+        return redirect(url_for("trip.view_trip", trip_id=trip.id) + f"#meeting-{meetup.id}")
+
+    return render_template("trip/edit_meetup.html", trip=trip, meetup=meetup)

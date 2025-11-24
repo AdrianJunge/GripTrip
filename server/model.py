@@ -230,12 +230,16 @@ class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
     proposal: Mapped["Proposal"] = relationship()
+    
+    title: Mapped[str] = mapped_column(String(256))
     location: Mapped[str] = mapped_column(String(256))
     date_raw: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), 
         default=lambda: datetime.datetime.now(datetime.timezone.utc)
     )
+
     description: Mapped[Optional[str]] = mapped_column(String(512), default="")
+    
     created_at_raw: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(),
         default=lambda: datetime.datetime.now(datetime.timezone.utc)
