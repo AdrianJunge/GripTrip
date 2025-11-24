@@ -1,0 +1,22 @@
+
+.dashboard-container {
+    background-color: rgb(229, 228, 228);
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    
+    width: 80vw;
+    height: 100vh;  
+    border-radius: 15px;
+    z-index: 1;
+}
+
+.dashboard-handle {
+    position: relative;
+    width: 10vw;
+    height: 5px;
+    background-color: #afafaf;
+    border-radius: 3px;
+    margin: 10px auto;
+}

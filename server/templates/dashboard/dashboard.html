@@ -1,0 +1,14 @@
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='main/dashboard.css') }}">
+{% endblock %}
+
+<div class="dashboard-container">
+    <div class="dashboard-handle"></div>
+    <div class="trips-grid">
+        {% for trip in trips %}
+            {% include 'trip/trip_card.html' with context %}
+        {% endfor %}
+    </div>
+    </div>
+</div>

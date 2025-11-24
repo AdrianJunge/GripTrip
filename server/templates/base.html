@@ -11,39 +11,12 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     </head>
+
     <body>
-        <div class="header">
-            <div class="container">
-                <a href="{{ url_for('main.index') }}" class="logo">{{ app_name }}</a>
-
-                {% if request.endpoint == 'main.index' %}
-                    <nav class="navbar navbar-light bg-light">
-                        <input id="search-bar" class="form-control mx-5" type="search" placeholder="Search Trip..." aria-label="Search Trip">
-                    </nav>
-                {% endif %}
-
-                <nav class="nav-links">
-                    <a href="{{ url_for('main.index') }}"
-                        class="btn {% if request.endpoint == 'main.index' %} btn-primary{% endif %}"
-                        aria-current="{% if request.endpoint == 'main.index' %}page{% endif %}">Home</a>
-
-                    <a href="{{ url_for('profile.view_profile') }}"
-                        class="btn {% if request.endpoint == 'profile.view_profile' %} btn-primary{% endif %}"
-                        aria-current="{% if request.endpoint == 'profile.view_profile' %}page{% endif %}">Profile</a>
-
-                    <a href="{{ url_for('trip.create_trip') }}"
-                        class="btn {% if request.endpoint == 'trip.create_trip' %} btn-primary{% endif %}"
-                        aria-current="{% if request.endpoint == 'trip.create_trip' %}page{% endif %}">Create Trip</a>
-
-                    <a href="{{ url_for('auth.logout') }}" class="btn">Logout</a>
-                </nav>
-            </div>
-        </div>
+        {% include 'header.html' with context %}
 
         <div class="main-wrapper">
-            <div class="container">
-                {% block content %}{% endblock %}
-            </div>
+            {% block content %}{% endblock %}
         </div>
 
         <div id="notification-wrapper" aria-live="polite" aria-atomic="true">
@@ -56,14 +29,11 @@
                 {% endfor %}
             {% endwith %}
         </div>
-
-        <footer class="footer">
-            <p>&copy; 2025 {{ app_name }}. All rights reserved.</p>
-        </footer>
+        
+        {% include 'footer.html' with context %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
     <script src="{{ url_for('static', filename='js/main/notifications.js') }}"></script>
 
     {% block scripts %}{% endblock %}
