@@ -1,0 +1,29 @@
+<div class="header">
+    <div class="container">
+        <a href="{{ url_for('main.index') }}" class="logo">{{ app_name }}</a>
+
+        {% if request.endpoint == 'main.index' %}
+            <nav class="navbar navbar-light bg-light">
+                <form class="form-inline mx-auto">
+                    <input id="search-bar" class="form-control w-100" type="search" placeholder="Search Trip..." aria-label="Search Trip">
+                </form>
+            </nav>
+        {% endif %}
+
+        <nav class="nav-links">
+            <a href="{{ url_for('main.index') }}"
+                class="btn {% if request.endpoint == 'main.index' %} btn-primary{% endif %}"
+                aria-current="{% if request.endpoint == 'main.index' %}page{% endif %}">Home</a>
+
+            <a href="{{ url_for('profile.view_profile') }}"
+                class="btn {% if request.endpoint == 'profile.view_profile' %} btn-primary{% endif %}"
+                aria-current="{% if request.endpoint == 'profile.view_profile' %}page{% endif %}">Profile</a>
+
+            <a href="{{ url_for('trip.create_trip') }}"
+                class="btn {% if request.endpoint == 'trip.create_trip' %} btn-primary{% endif %}"
+                aria-current="{% if request.endpoint == 'trip.create_trip' %}page{% endif %}">Create Trip</a>
+
+            <a href="{{ url_for('auth.logout') }}" class="btn">Logout</a>
+        </nav>
+    </div>
+</div>
