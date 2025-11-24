@@ -27,10 +27,8 @@ body {
 }
 
 .main-wrapper {
-    flex: 1 0 auto;
-    display: block;
-    min-height: 0;
-    background-color: #e1e8ed;
+    display: flex;
+    justify-content: center;
 }
 
 .header {

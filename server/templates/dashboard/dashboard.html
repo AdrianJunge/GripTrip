@@ -6,6 +6,9 @@
 <div class="dashboard-container">
     <div class="dashboard-handle"></div>
     <div class="trips-grid">
-        {% for trip in trips %}{% endfor %}
+        {% for trip in trips %}
+            {% include 'trip/trip_card.html' with context %}
+        {% endfor %}
+    </div>
     </div>
 </div>

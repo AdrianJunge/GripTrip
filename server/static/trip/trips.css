@@ -1,17 +1,25 @@
 .trips-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 16px;
-    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+
+    margin: 18px;
 }
 
 .trip-card {
-    display: block;
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+
     background: white;
     border-radius: 8px;
     padding: 12px 14px;
+    margin-top: 12px;
+    margin-bottom: 12px;
+
+
+
     text-decoration: none;
-    color: inherit;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     transition: transform .12s ease, box-shadow .12s ease;
     border: 1px solid rgba(0,0,0,0.04);
