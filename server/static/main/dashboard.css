@@ -1,5 +1,6 @@
 
 .dashboard-container {
+    position: relative;
     background-color: rgb(229, 228, 228);
 
     display: flex;
@@ -9,7 +10,7 @@
     width: 80vw;
     height: 100vh;  
     border-radius: 15px;
-    z-index: 1;
+    z-index: 10;
 }
 
 .dashboard-handle {
