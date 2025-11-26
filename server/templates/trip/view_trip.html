@@ -6,40 +6,41 @@
 {% endblock %}
 
 {% block content %}
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="mb-0">{{ trip.title or trip.name }}</h1>
-        <div class="openness">
-            {% if trip.status == trip.status.__class__.OPEN %}
-                <span class="badge bg-secondary">OPEN</span>
-            {% elif trip.status == trip.status.__class__.CLOSED_TO_NEW %}
-                <span class="badge bg-warning">CLOSED TO NEW</span>
-            {% elif trip.status == trip.status.__class__.FINALIZED %}
-                <span class="badge bg-success">FINALIZED</span>
-            {% elif trip.status == trip.status.__class__.CANCELLED %}
-                <span class="badge bg-danger">CANCELLED</span>
-            {% else %}
-                <span class="badge bg-secondary">UNKNOWN STATE</span>
-            {% endif %}
-        </div>
-        <div>
-            {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
-                <form action="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
-                    <button class="btn btn-primary"
-                        {% if trip.status == trip.status.__class__.FINALIZED or trip.status == trip.status.__class__.CANCELLED %}
-                            disabled
-                        {% endif %}
-                    >
-                        Edit Trip
+    <div class="m-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="mb-0">{{ trip.title or trip.name }}</h1>
+            <div class="openness">
+                {% if trip.status == trip.status.__class__.OPEN %}
+                    <span class="badge bg-secondary">OPEN</span>
+                {% elif trip.status == trip.status.__class__.CLOSED_TO_NEW %}
+                    <span class="badge bg-warning">CLOSED TO NEW</span>
+                {% elif trip.status == trip.status.__class__.FINALIZED %}
+                    <span class="badge bg-success">FINALIZED</span>
+                {% elif trip.status == trip.status.__class__.CANCELLED %}
+                    <span class="badge bg-danger">CANCELLED</span>
+                {% else %}
+                    <span class="badge bg-secondary">UNKNOWN STATE</span>
+                {% endif %}
+            </div>
+            <div>
+                {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
+                    <form action="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
+                        <button class="btn btn-primary"
+                            {% if trip.status == trip.status.__class__.FINALIZED or trip.status == trip.status.__class__.CANCELLED %}
+                                disabled
+                            {% endif %}
+                        >
+                            Edit Trip
+                        </button>
+                    </form>
+                {% endif %}
+                <form action="{{ url_for('trip.leave_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
+                    <button type="submit" class="btn btn-danger">
+                        Leave Trip
                     </button>
                 </form>
-            {% endif %}
-            <form action="{{ url_for('trip.leave_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
-                <button type="submit" class="btn btn-danger">
-                    Leave Trip
-                </button>
-            </form>
+            </div>
         </div>
-    </div>
 
     <div class="mb-3">
         <p class="mb-1">Created by:
@@ -81,185 +82,186 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Dates</span>
-                    <small>
-                        {% if trip.is_final('dates') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.dates %}
-                        {% for pair in trip.dates %}
-                            {% set start = pair[0] %}
-                            {% set end = pair[1] %}
-                            <span class="badge bg-secondary">{{ start }} → {{ end }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-muted">No dates</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Activities</span>
-                    <small>
-                        {% if trip.is_final('activities') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.activities %}
-                        {% for a in trip.activities %}
-                            <span class="badge bg-secondary">{{ a }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-muted">No activities</div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card mb-3">
-                <div class="card-header text-center">
-                    <strong>Discussion</strong>
-                </div>
-                {% include "trip/discussion.html" with context %}
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Accommodation</span>
-                    <small>
-                        {% if trip.is_final('accommodation') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.accommodation %}
-                        <div>{{ trip.accommodation }}</div>
-                    {% else %}
-                        <div class="text-muted">No accommodation set</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Budget</span>
-                    <small>
-                        {% if trip.is_final('budget') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.budget is not none %}
-                        <div>{{ trip.budget }}</div>
-                    {% else %}
-                        <div class="text-muted">No budget set</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Transportation</span>
-                    <small>
-                        {% if trip.is_final('transportation') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.transportation %}
-                        <div>{{ trip.transportation }}</div>
-                    {% else %}
-                        <div class="text-muted">No transportation set</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Departure locations</span>
-                    <small>
-                        {% if trip.is_final('departure_locations') %}
-                            <span class="badge bg-success" title="Final">✓</span>
-                        {% else %}
-                            <span class="badge bg-info" title="Not final">open</span>
-                        {% endif %}
-                    </small>
-                </h6>
-                <div>
-                    {% if trip.departure_locations %}
-                        {% for d in trip.departure_locations %}
-                            <span class="badge bg-secondary">{{ d }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-muted">No departure locations</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <h6 class="d-flex justify-content-between align-items-center">
-                    <span class="mb-1">Participants</span>
-                    <small class="text-muted"><strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></small>
-                </h6>
-                <div class="participant-list">
-                    {% set current_role = trip.get_user_role(current_user) %}
-                    {% for p in trip.participants %}
-                        <div class="participant-item" id="participant-{{ p.user.id }}">
-                            <div class="participant-avatar">{{ p.user.avatar }}</div>
-                            <div class="participant-name">
-                                <a class="link" href="{{ url_for('profile.view_profile', user_id=p.user.id) }}">{{ p.user.username }}</a>
-                            </div>
-                            <div class="participant-role me-2">
-                                <span class="badge bg-light text-dark" id="role-badge-{{ p.user.id }}">{{ p.permission.name.title() }}</span>
-                            </div>
-                            {% if p.user.id != current_user.id %}
-                                <div class="participant-action">
-                                    {% if current_role and current_role.name == 'ADMIN' %}
-                                        <form action="{{ url_for('trip.change_participant_role', trip_id=trip.id, user_id=p.user.id) }}"
-                                            method="post" style="display:inline;">
-                                            <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
-                                                {% for r in ['VIEWER','EDITOR','ADMIN'] %}
-                                                    <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </form>
-                                    {% endif %}
-                                </div>
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Dates</span>
+                        <small>
+                            {% if trip.is_final('dates') %}
+                                <span class="badge bg-success" title="Final">✓</span>
                             {% else %}
-                                <div class="participant-action">
-                                    <span class="text-muted">You</span>
-                                </div>
+                                <span class="badge bg-info" title="Not final">open</span>
                             {% endif %}
-                        </div>
-                    {% endfor %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.dates %}
+                            {% for pair in trip.dates %}
+                                {% set start = pair[0] %}
+                                {% set end = pair[1] %}
+                                <span class="badge bg-secondary">{{ start }} → {{ end }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-muted">No dates</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Activities</span>
+                        <small>
+                            {% if trip.is_final('activities') %}
+                                <span class="badge bg-success" title="Final">✓</span>
+                            {% else %}
+                                <span class="badge bg-info" title="Not final">open</span>
+                            {% endif %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.activities %}
+                            {% for a in trip.activities %}
+                                <span class="badge bg-secondary">{{ a }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-muted">No activities</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="card mb-3">
+                    <div class="card-header text-center">
+                        <strong>Discussion</strong>
+                    </div>
+                    {% include "trip/discussion.html" with context %}
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Accommodation</span>
+                        <small>
+                            {% if trip.is_final('accommodation') %}
+                                <span class="badge bg-success" title="Final">✓</span>
+                            {% else %}
+                                <span class="badge bg-info" title="Not final">open</span>
+                            {% endif %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.accommodation %}
+                            <div>{{ trip.accommodation }}</div>
+                        {% else %}
+                            <div class="text-muted">No accommodation set</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Budget</span>
+                        <small>
+                            {% if trip.is_final('budget') %}
+                                <span class="badge bg-success" title="Final">✓</span>
+                            {% else %}
+                                <span class="badge bg-info" title="Not final">open</span>
+                            {% endif %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.budget is not none %}
+                            <div>{{ trip.budget }}</div>
+                        {% else %}
+                            <div class="text-muted">No budget set</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Transportation</span>
+                        <small>
+                            {% if trip.is_final('transportation') %}
+                                <span class="badge bg-success" title="Final">✓</span>
+                            {% else %}
+                                <span class="badge bg-info" title="Not final">open</span>
+                            {% endif %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.transportation %}
+                            <div>{{ trip.transportation }}</div>
+                        {% else %}
+                            <div class="text-muted">No transportation set</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span>Departure locations</span>
+                        <small>
+                            {% if trip.is_final('departure_locations') %}
+                                <span class="badge bg-success" title="Final">✓</span>
+                            {% else %}
+                                <span class="badge bg-info" title="Not final">open</span>
+                            {% endif %}
+                        </small>
+                    </h6>
+                    <div>
+                        {% if trip.departure_locations %}
+                            {% for d in trip.departure_locations %}
+                                <span class="badge bg-secondary">{{ d }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-muted">No departure locations</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <h6 class="d-flex justify-content-between align-items-center">
+                        <span class="mb-1">Participants</span>
+                        <small class="text-muted"><strong>{{ trip.participants|length }}</strong> / <strong>{{ trip.max_participants }}</strong></small>
+                    </h6>
+                    <div class="participant-list">
+                        {% set current_role = trip.get_user_role(current_user) %}
+                        {% for p in trip.participants %}
+                            <div class="participant-item" id="participant-{{ p.user.id }}">
+                                <div class="participant-avatar">{{ p.user.avatar }}</div>
+                                <div class="participant-name">
+                                    <a class="link" href="{{ url_for('profile.view_profile', user_id=p.user.id) }}">{{ p.user.username }}</a>
+                                </div>
+                                <div class="participant-role me-2">
+                                    <span class="badge bg-light text-dark" id="role-badge-{{ p.user.id }}">{{ p.permission.name.title() }}</span>
+                                </div>
+                                {% if p.user.id != current_user.id %}
+                                    <div class="participant-action">
+                                        {% if current_role and current_role.name == 'ADMIN' %}
+                                            <form action="{{ url_for('trip.change_participant_role', trip_id=trip.id, user_id=p.user.id) }}"
+                                                method="post" style="display:inline;">
+                                                <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                    {% for r in ['VIEWER','EDITOR','ADMIN'] %}
+                                                        <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                {% else %}
+                                    <div class="participant-action">
+                                        <span class="text-muted">You</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% include "trip/meetups.html" with context %}
         </div>
-        {% include "trip/meetups.html" with context %}
     </div>
 {% endblock %}
 
