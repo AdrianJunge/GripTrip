@@ -1,0 +1,11 @@
+<div class= "map-wrapper">
+    <div id="map"
+    {% if user_home %}
+    data-lat="{{ user_home[0] }}"
+    data-lon="{{ user_home[1] }}"
+    data-country="{{ user_country }}"
+    {% endif %}
+    data-trips='{{ trip_icons | tojson }}'>
+    </div>
+    <div id="map-margin"></div>
+</div>

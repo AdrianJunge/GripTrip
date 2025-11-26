@@ -10,21 +10,34 @@ class Base(DeclarativeBase):
 
 db = SQLAlchemy(model_class=Base)
 
+VIRT_LAB_DB = os.environ.get("VIRT_LAB_DB", "0") == "1"
+
 def create_app(test_config=None):
     app = Flask(__name__)
 
     app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
-    DB_USER = os.environ.get("DB_USER", "webapp")
-    DB_PASSWORD = os.environ.get("DB_PASSWORD", "webapp-user")
-    DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
-    DB_PORT = os.environ.get("DB_PORT", "3306")
-    DB_NAME = os.environ.get("DB_NAME", "web_app")
+    if VIRT_LAB_DB:
+      DB_USER = "26_webapp_24"
+      DB_PASSWORD = "byUsC1YJ"
+      DB_HOST = "mysql.lab.it.uc3m.es"
+      DB_PORT = 80
+      DB_NAME = f'{DB_USER}a'
 
-    password_quoted = urllib.parse.quote_plus(DB_PASSWORD)
+      app.config[
+          "SQLALCHEMY_DATABASE_URI"
+      ] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    else:
+      DB_USER = os.environ.get("DB_USER", "webapp")
+      DB_PASSWORD = os.environ.get("DB_PASSWORD", "webapp-user")
+      DB_HOST = os.environ.get("DB_HOST", "127.0.0.1")
+      DB_PORT = os.environ.get("DB_PORT", "3306")
+      DB_NAME = os.environ.get("DB_NAME", "web_app")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{DB_USER}:{password_quoted}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+      password_quoted = urllib.parse.quote_plus(DB_PASSWORD)
+
+      app.config["SQLALCHEMY_DATABASE_URI"] = f"mysql+pymysql://{DB_USER}:{password_quoted}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
+      app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
 

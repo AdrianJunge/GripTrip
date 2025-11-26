@@ -231,6 +231,7 @@ class ProposalParticipant(db.Model):
     @property
     def joined_at(self):
         return self.joined_at_raw.replace(tzinfo=datetime.timezone.utc)
+        
 
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -261,6 +262,7 @@ class Meetup(db.Model):
     @property
     def created_at(self):
         return self.created_at_raw.replace(tzinfo=datetime.timezone.utc)
+
 
 class MeetupParticipant(db.Model):
     meetup_id: Mapped[int] = mapped_column(ForeignKey("meetup.id"), primary_key=True)

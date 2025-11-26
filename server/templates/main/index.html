@@ -18,22 +18,9 @@
 {% block content %}
 
 <div class="dbm-container"> 
-    <!-- Shold replace with a html template for leaflet-->
-    <div class= "map-wrapper">
-        <div id="map"
-        {% if user_home %}
-        data-lat="{{ user_home[0] }}"
-        data-lon="{{ user_home[1] }}"
-        data-country="{{ user_country }}"
-        {% endif %}
-        data-trips='{{ trip_icons| tojson }}'
-        >
-        </div>
-        <div id="map-margin"></div>
-    </div>
+    {% include "map/map.html" with context %}
     {% include "dashboard/dashboard.html" with context %}
 </div>
-
 
 <script src ="{{ url_for('static', filename='js/main/home_popup.js') }}"></script>
 <script src="{{ url_for('static', filename='js/main/index.js') }}"></script>

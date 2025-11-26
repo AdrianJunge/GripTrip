@@ -6,7 +6,18 @@
 <div class="dashboard-container">
     <div class="dashboard-handle"></div>
     <div class="trips-grid">
-        {% for trip in trips %}
+        <h2>Your Trips</h2>
+        {% if user_trips|length == 0 %}
+            <p>You have not created any trips yet.</p>
+        {% else %}
+            {% for trip in user_trips %}
+                {% include 'trip/trip_card.html' with context %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div class="trips-grid">
+        <h2>All Trips</h2>
+        {% for trip in overall_trips %}
             {% include 'trip/trip_card.html' with context %}
         {% endfor %}
     </div>
