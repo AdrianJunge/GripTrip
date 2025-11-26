@@ -40,6 +40,7 @@ def init_database():
             user=testuser,
             title="Test Trip",
             max_participants=5,
+            country_code=pycountry.countries.get(name="Spain").alpha_3,
         )
 
         testuser_participant = ProposalParticipant(
@@ -59,6 +60,7 @@ def init_database():
             user=mary,
             title="Mary's Trip",
             max_participants=3,
+            country_code=pycountry.countries.get(name="France").alpha_3,
         )
         mary_participant_another_trip = ProposalParticipant(
             user=mary,

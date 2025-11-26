@@ -5,6 +5,7 @@ from flask_login import current_user, login_required
 from . import db
 from . import model
 import json
+import pycountry
 
 bp = Blueprint("trip", __name__)
 
@@ -40,6 +41,7 @@ def create_trip():
     if request.method == "POST":
         trip_name = request.form.get("trip_name")
         max_participants = request.form.get("max_participants")
+        country_code = request.form.get("country_code")
 
         if not trip_name or not max_participants:
             flash("Mandatory fields are missing", "error")
@@ -50,6 +52,7 @@ def create_trip():
                 user_id=current_user.id,
                 title=trip_name,
                 max_participants=max_participants or 1,
+                country_code=country_code
             )
         except Exception as e:
             flash(str(e), "error")
@@ -69,8 +72,10 @@ def create_trip():
         db.session.add(new_trip)
         db.session.commit()
         return redirect(url_for("trip.view_trip", trip_id=new_trip.id))
+    
+    countries = list(pycountry.countries)
 
-    return render_template("trip/create_trip.html")
+    return render_template("trip/create_trip.html", countries = countries)
 
 
 @bp.route("/trip/edit/<int:trip_id>", methods=["GET", "POST"])
@@ -119,14 +124,16 @@ def edit_trip(trip_id):
 
         trip_name = request.form.get("trip_name")
         max_participants = request.form.get("max_participants")
+        country_code = request.form.get("country_code")
 
-        if not trip_name or not max_participants:
+        if not trip_name or not max_participants or not country_code:
             flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.edit_trip", trip_id=trip.id))
 
         try:
             trip.title = trip_name
             trip.max_participants = int(max_participants)
+            trip.country_code = country_code
             status_str = request.form.get("status")
 
             if status_str:
@@ -156,6 +163,7 @@ def edit_trip(trip_id):
         trip=trip,
         ProposalStatus=model.ProposalStatus,
         all_final=all_final,
+        countries = list(pycountry.countries)
     )
 
 

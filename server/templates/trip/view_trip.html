@@ -49,11 +49,19 @@
         </p>
     </div>
 
+    <div class="mb-3">
+        <p class="mb-1">Country of Destination:
+            <a class="link" href="{{ url_for('profile.view_profile', user_id=trip.user.id) }}">
+                <strong>{{ trip.country }}</strong>
+            </a>
+        </p>
+    </div>
+
     <div class="row">
         <div class="col-md-3">
             <div class="mb-3">
                 <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Destinations</span>
+                    <span>Destination Sites</span>
                     <small>
                         {% if trip.is_final('destinations') %}
                             <span class="badge bg-success" title="Final">✓</span>
@@ -68,7 +76,7 @@
                             <span class="badge bg-secondary">{{ destination }}</span>
                         {% endfor %}
                     {% else %}
-                        <div class="text-muted">No destinations</div>
+                        <div class="text-muted">No destination sites</div>
                     {% endif %}
                 </div>
             </div>
@@ -259,6 +267,6 @@
     <script src="{{ url_for('static', filename='js/trip/messages.js') }}"></script>
     <script src="{{ url_for('static', filename='js/trip/participants.js') }}"></script>
     <script>
-        window.currentTripId = {{ trip.id }};
+        window.currentTripId = "{{ trip.id }}";
     </script>
 {% endblock %}

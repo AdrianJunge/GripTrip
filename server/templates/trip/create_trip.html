@@ -20,7 +20,16 @@
                 <label for="maxParticipants" class="form-label">Maximum Participants</label>
                 <input type="number" class="form-control" id="maxParticipants" name="max_participants" min="1" value="1" required>
             </div>
-        </div>
+
+            <div class="mb-3">
+                <label for="country_code" class="form-label">Destination Country</label>
+                <select class="form-select" id="country_code" name="country_code" required>
+                    <option value="" disabled selected>Select a country</option>
+                    {% for c in countries %}
+                        <option value="{{ c.alpha_3 }}">{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
     </div>
 
     <div class="card mb-3">
@@ -34,8 +43,8 @@
             <div class="card card-body">
 
                 <div class="mb-3">
-                    <label class="form-label">Destinations</label>
-                    <input name="destination" class="form-control tagify" placeholder="Add destinations" value="">
+                    <label class="form-label">Destination Sites</label>
+                    <input name="destinations" class="form-control tagify" placeholder="Add sites" value="">
                     <div class="form-text">Press Enter or comma to add multiple destinations.</div>
                 </div>
 
