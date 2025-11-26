@@ -88,7 +88,7 @@ class Proposal(db.Model):
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
-    country_code: Mapped[str] = mapped_column(String(3), default=None, nullable= False)
+    country_code: Mapped[str] = mapped_column(String(3), nullable= False)
     
     final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)

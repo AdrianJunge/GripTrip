@@ -4,14 +4,55 @@ const map = L.map('map').setView([54, 15], 3);
         maxZoom: 19,
     }).addTo(map);
 
-    const lat = document.getElementById('map').dataset.lat;
-    const lon = document.getElementById('map').dataset.lon;
-    const country_name = document.getElementById('map').dataset.country;
+    var TravelIcon = L.Icon.extend({
+        options: {
+            iconSize: [40, 50],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -35],            
+        }
+    });
 
-    if(lat && lon){
-            L.marker([lat, lon]).addTo(map)
-                .bindPopup("Home: " + country_name)
+    var greenIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_green.png'}),
+    redIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_red.png'});
+
+
+    const h_lat = document.getElementById('map').dataset.lat;
+    const h_lon = document.getElementById('map').dataset.lon;
+    const h_country_name = document.getElementById('map').dataset.country;
+
+    if(h_lat && h_lon){
+            L.marker([h_lat, h_lon], { icon: redIcon }).addTo(map)
+                .bindPopup("Home: <strong>" + h_country_name + "</strong>")
                 .openPopup();
 
-            map.setView([lat, lon], 5);
+            map.setView([h_lat, h_lon], 5);
+    }
+
+    //need a better way of doing this
+    const tripsData = document.getElementById("map").dataset.trips;
+    let mapTrips = [];
+    if (tripsData){
+        mapTrips = JSON.parse(tripsData);
+    }
+
+    const pin_points = {};
+    mapTrips.forEach(function (trip) {
+        if (trip.lat && trip.lon) {
+            const key = trip.lat + ',' + trip.lon;
+            if (pin_points[key]) {
+                pin_points[key].push(trip);
+            } else {
+                pin_points[key] = [trip];
+            }
+        }
+    });
+    //warning trips with same location will not be displayed correctly
+    if (mapTrips.length > 0) {
+        mapTrips.forEach(function (trip) {
+            if (trip.lat && trip.lon) {
+                L.marker([trip.lat, trip.lon], { icon: greenIcon }).addTo(map)
+                    .bindPopup(`<a href="/trip/${trip.id}">
+                    <strong>${trip.title}</strong> </a>`);
+            }
+        });
     }
