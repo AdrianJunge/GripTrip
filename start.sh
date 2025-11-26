@@ -7,6 +7,8 @@ ROOTPW="MyNewRootPW!ChangeMe"
 WEBAPP_PW="webapp-user"
 DB_NAME="web_app"
 
+export VIRT_LAB_DB="0"
+
 echo "Pulling git changes..."
 git pull
 
@@ -45,7 +47,7 @@ FLUSH PRIVILEGES;
 echo "Database and user created. Test connecting as webapp:"
 docker exec -i "$CONTAINER_NAME" mysql -h 127.0.0.1 -P 3306 -u webapp -p"$WEBAPP_PW" -D "$DB_NAME" -e "SHOW TABLES;"
 
-venv_dir="/tmp/test_env_$(python --version 2>&1)"
+venv_dir="/tmp/test_env_$(python3 --version 2>&1)"
 
 if [ ! -d "$venv_dir" ]; then
     echo "Virtual environment not found — creating one..."
@@ -57,7 +59,7 @@ fi
 source "$venv_dir/bin/activate"
 pip install --upgrade pip
 pip install -r requirements.txt
-python init_db.py
+python3 init_db.py
 
 echo "Starting Flask (debug) — if you want this to run in background, run it separately."
 flask --debug --app=server run
