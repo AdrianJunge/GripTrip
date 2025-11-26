@@ -131,21 +131,20 @@
 
 
 # Additional functionality
+- [ ] user can check a map where they had their trips - leaflet.js
 - [ ] friends
     - [ ] you can choose trips to be public, just for friends, private
-- [ ] user can check a map where they had their trips - leaflet.js
 - [ ] statistics of your trips
-- [ ] "live" messages via async JS
-- [ ] "brilliant" user interface
+- [x] "brilliant" user interface
     - remarkable appearance at level of current standards for professional applications
 
 
 # Requirements
 - [x] developed in Python with Flask
-- [ ] must work with infra from lab with assigned database
-- [ ] views of application are clear and easy to use
-- [ ] potential error situations are properly handled, giving users feedback when appropriate
-- [ ] proper access controls
+- [x] must work with infra from lab with assigned database
+- [x] views of application are clear and easy to use
+- [x] potential error situations are properly handled, giving users feedback when appropriate
+- [x] proper access controls
 - [ ] secure application (no SQLI, no XSS)
 
 
