@@ -20,7 +20,14 @@ def index():
         .filter(model.Proposal.status == model.ProposalStatus.OPEN)
         .order_by(model.Proposal.timestamp_raw.desc())
     )
-    trips = db.session.execute(query).scalars().all()
+    overall_trips = db.session.execute(query).scalars().all()
+
+    query = (
+        db.select(model.Proposal)
+        .filter(model.Proposal.user_id == current_user.id)
+        .order_by(model.Proposal.timestamp_raw.desc())
+    )
+    user_trips = db.session.execute(query).scalars().all()
 
     user_country = current_user.country
     try:
@@ -32,7 +39,8 @@ def index():
 
     return render_template(
         "main/index.html",
-        trips=trips,
+        overall_trips=overall_trips,
+        user_trips=user_trips,
         user_home=user_home,
         user_country=user_country,
     )

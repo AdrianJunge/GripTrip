@@ -7,6 +7,9 @@ ROOTPW="MyNewRootPW!ChangeMe"
 WEBAPP_PW="webapp-user"
 DB_NAME="web_app"
 
+echo "Pulling git changes..."
+git pull
+
 echo "Removing any previous container named $CONTAINER_NAME..."
 docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
 
