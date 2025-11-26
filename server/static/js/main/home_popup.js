@@ -1,4 +1,4 @@
-const map = L.map('map').setView([54, 15], 3);
+const map = L.map('map');
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -14,6 +14,8 @@ const map = L.map('map').setView([54, 15], 3);
 
     var greenIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_green.png'}),
     redIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_red.png'});
+    
+    var allCoords = [];
 
 
     const h_lat = document.getElementById('map').dataset.lat;
@@ -21,6 +23,7 @@ const map = L.map('map').setView([54, 15], 3);
     const h_country_name = document.getElementById('map').dataset.country;
 
     if(h_lat && h_lon){
+        allCoords.push([h_lat, h_lon]);
             L.marker([h_lat, h_lon], { icon: redIcon }).addTo(map)
                 .bindPopup("Home: <strong>" + h_country_name + "</strong>")
                 .openPopup();
@@ -38,6 +41,7 @@ const map = L.map('map').setView([54, 15], 3);
     const pin_points = {};
     mapTrips.forEach(function (trip) {
         if (trip.lat && trip.lon) {
+            allCoords.push([trip.lat, trip.lon]);
             const key = trip.lat + ',' + trip.lon;
             if (pin_points[key]) {
                 pin_points[key].push(trip);
@@ -55,4 +59,13 @@ const map = L.map('map').setView([54, 15], 3);
                     <strong>${trip.title}</strong> </a>`);
             }
         });
+    }
+
+    if (allCoords.length === 0) {
+        map.setView([54, 15], 3);
+    } else if (allCoords.length === 1) {
+        map.setView(allCoords[0], 5);
+    } else {
+        const bounds = L.latLngBounds(allCoords);
+        map.fitBounds(bounds, { padding: [50, 50] });
     }
