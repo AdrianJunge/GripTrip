@@ -29,10 +29,29 @@ def index():
         user_home = (lat, lon)
     except Exception as e:
         user_home = None
+    
+    trip_icons = []
+    for trip in trips:
+        participant_ids = {participant.user_id for participant in trip.participants}
+        if current_user.id not in participant_ids:
+            continue
+        try:
+            country = CountryInfo(trip.country)
+            lat, lon = country.info()["latlng"]
+            trip_icons.append({
+                "id": trip.id,
+                "title": trip.title,
+                "lat": lat,
+                "lon": lon,
+                "country_code": trip.country_code
+            })
+        except Exception as e:
+            continue
 
     return render_template(
         "main/index.html",
         trips=trips,
         user_home=user_home,
         user_country=user_country,
+        trip_icons=trip_icons
     )
