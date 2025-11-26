@@ -21,12 +21,11 @@ def create_app(test_config=None):
       DB_USER = "26_webapp_24"
       DB_PASSWORD = "byUsC1YJ"
       DB_HOST = "mysql.lab.it.uc3m.es"
-      DB_PORT = 80
       DB_NAME = f'{DB_USER}a'
 
       app.config[
           "SQLALCHEMY_DATABASE_URI"
-      ] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+      ] = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}"
     else:
       DB_USER = os.environ.get("DB_USER", "webapp")
       DB_PASSWORD = os.environ.get("DB_PASSWORD", "webapp-user")
