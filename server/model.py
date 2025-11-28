@@ -10,6 +10,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
 import pycountry
+import requests
 
 from . import db
 
@@ -24,7 +25,6 @@ class User(flask_login.UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(256))
     proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
-    country_code: Mapped[str] = mapped_column(String(3), nullable=False)
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
         primaryjoin=FollowingAssociation.follower_id == id,
@@ -38,10 +38,10 @@ class User(flask_login.UserMixin, db.Model):
         back_populates="following",
     )
 
-    @property
-    def country(self):
-        country = pycountry.countries.get(alpha_3=self.country_code)
-        return country.name if country else "Unknown"
+    #@property
+    #def country(self):
+    #    country = pycountry.countries.get(alpha_3=self.country_code)
+    #    return country.name if country else "Unknown"
 
     @property
     def avatar(self):
@@ -80,6 +80,8 @@ class Proposal(db.Model):
     participants: Mapped[List["ProposalParticipant"]] = relationship(back_populates="proposal")
 
     # Trip details - optional/tentative
+    primary_coordinates: Mapped[Optional[Tuple[float, float]]] = mapped_column(JSON, default=None, nullable=True)
+    primary_destination: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
     budget: Mapped[Optional[float]] = mapped_column(Float, default=None, nullable=True)
     accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
     transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
