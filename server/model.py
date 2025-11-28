@@ -25,6 +25,7 @@ class User(flask_login.UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(256))
     proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
+    country_code: Mapped[str] = mapped_column(String(3), nullable= False)
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
         primaryjoin=FollowingAssociation.follower_id == id,
