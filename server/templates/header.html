@@ -1,11 +1,12 @@
-<div class="header">
+<div class="header" data-trips='{{ user_trips | map(attribute="id") | list | tojson if user_trips is defined else "[]" }}' data-trip-titles='{{ user_trips | map(attribute="title") | list | tojson if user_trips is defined else "[]" }}'>
     <div class="container">
         <a href="{{ url_for('main.index') }}" class="logo">{{ app_name }}</a>
 
         {% if request.endpoint == 'main.index' %}
             <nav class="navbar navbar-light bg-light">
                 <form class="form-inline mx-auto">
-                    <input id="search-bar" class="form-control w-100" type="search" placeholder="Search Trip..." aria-label="Search Trip">
+                    <input id="search-bar" class="form-control w-100" type="search" placeholder="Search Trip..." aria-label="Search Trip" autocomplete="off">
+                    <ul id="search-results" class="search-results"></ul>
                 </form>
             </nav>
         {% endif %}
