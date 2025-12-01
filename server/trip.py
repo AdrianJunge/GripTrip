@@ -11,6 +11,21 @@ import requests
 bp = Blueprint("trip", __name__)
 
 
+def set_destination_coordinates(trip_proposal):
+    if trip_proposal.destinations:
+        primary = trip_proposal.destinations[0]
+        coords = fetch_coordinates_for_destination(primary)
+        if coords == None: raise ValueError("There's no such destination")
+        
+        print("coords: ", coords)
+        print("Primary: ", primary)
+
+        if coords:
+            trip_proposal.primary_coordinates = coords
+            trip_proposal.primary_destination = primary
+        else:
+            flash("No primary destination found.", "error")
+            return False
 
 def fetch_coordinates_for_destination(destination):
     try:
@@ -33,29 +48,14 @@ def fetch_coordinates_for_destination(destination):
     return None
 
 def set_details_from_request(trip_proposal):
-
-    #destinations = json.loads(request.form.get("destination")) if request.form.get("destination") else []
-    destinations = trip_proposal.destinations
+    destinations = json.loads(request.form.get("destinations")) if request.form.get("destinations") else []
     activities = json.loads(request.form.get("activity")) if request.form.get("activity") else []
 
-    print("Destinations:", destinations)
-
-    if destinations:
-        primary = destinations[0]
-        coords = fetch_coordinates_for_destination(primary)
-        if coords:
-            trip_proposal.primary_coordinates = coords
-            trip_proposal.primary_destination = primary
-        else:
-            flash("No primary destination found.", "error")
-            return False
-
+    # set departure thingy
     departure_locations = json.loads(request.form.get("departure_location")) if request.form.get("departure_location") else []
-
     start_dates = request.form.getlist("start_date") or []
     end_dates = request.form.getlist("end_date") or []
     dates = list(zip(start_dates, end_dates))
-
     budget = request.form.get("budget") or None
     accommodation = request.form.get("accommodation") or None
     transportation = request.form.get("transportation") or None    
@@ -68,6 +68,7 @@ def set_details_from_request(trip_proposal):
         trip_proposal.activities = activities
         trip_proposal.departure_locations = departure_locations
         trip_proposal.dates = dates
+        set_destination_coordinates(trip_proposal)
     except Exception as e:
         flash (str(e), "error")
         return False
@@ -85,19 +86,16 @@ def create_trip():
             flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.create_trip"))
 
-        # create new trip
-        destinations = json.loads(request.form.get("destinations"))
+        # the problem child right here
         country_code = "err"#request.form.get("country_code")
 
-        print(type(destinations))
-
+        # create new trip
         try:
             new_trip = model.Proposal(
                 user_id=current_user.id,
                 title=trip_name,
                 max_participants=max_participants or 1,
                 country_code=country_code,
-                destinations=destinations
             )
         except Exception as e:
             flash(str(e), "error:")

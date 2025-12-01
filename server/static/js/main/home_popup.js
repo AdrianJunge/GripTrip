@@ -31,26 +31,13 @@ const map = L.map('map');
             map.setView([h_lat, h_lon], 5);
     }
 
-    //need a better way of doing this
+    //double check if this works
     const tripsData = document.getElementById("map").dataset.trips;
     let mapTrips = [];
     if (tripsData){
         mapTrips = JSON.parse(tripsData);
     }
 
-    const pin_points = {};
-    mapTrips.forEach(function (trip) {
-        if (trip.lat && trip.lon) {
-            allCoords.push([trip.lat, trip.lon]);
-            const key = trip.lat + ',' + trip.lon;
-            if (pin_points[key]) {
-                pin_points[key].push(trip);
-            } else {
-                pin_points[key] = [trip];
-            }
-        }
-    });
-    //warning trips with same location will not be displayed correctly
     if (mapTrips.length > 0) {
         mapTrips.forEach(function (trip) {
             if (trip.lat && trip.lon) {
