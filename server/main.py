@@ -30,12 +30,12 @@ def index():
     user_trips = db.session.execute(query).scalars().all()
 
     #user_country = current_user.country
-    try:
-        country = CountryInfo(user_country)
-        lat, lon = country.info()["latlng"]
-        user_home = (lat, lon)
-    except Exception as e:
-        user_home = None
+    #try:
+     #   country = CountryInfo(user_country)
+      #  lat, lon = country.info()["latlng"]
+       # user_home = (lat, lon)
+    #except Exception as e:
+     #   user_home = None
     
     trip_icons = []
     for trip in user_trips:
@@ -59,7 +59,7 @@ def index():
         "main/index.html",
         overall_trips=overall_trips,
         user_trips=user_trips,
-        user_home=user_home,
+        #user_home=user_home,
         #user_country=user_country, # why was this needed?
         trip_icons=trip_icons
     )

@@ -10,6 +10,8 @@ import requests
 
 bp = Blueprint("trip", __name__)
 
+
+
 def fetch_coordinates_for_destination(destination):
     try:
         response = requests.get(
@@ -19,6 +21,9 @@ def fetch_coordinates_for_destination(destination):
         )
         response.raise_for_status()
         data = response.json()
+
+        print(f"DATA FETCHED : {data}", flush=True)
+
         if data:
             lat = float(data[0]["lat"])
             lon = float(data[0]["lon"])
@@ -28,8 +33,23 @@ def fetch_coordinates_for_destination(destination):
     return None
 
 def set_details_from_request(trip_proposal):
-    destinations = json.loads(request.form.get("destination")) if request.form.get("destination") else []
+
+    #destinations = json.loads(request.form.get("destination")) if request.form.get("destination") else []
+    destinations = trip_proposal.destinations
     activities = json.loads(request.form.get("activity")) if request.form.get("activity") else []
+
+    print("Destinations:", destinations)
+
+    if destinations:
+        primary = destinations[0]
+        coords = fetch_coordinates_for_destination(primary)
+        if coords:
+            trip_proposal.primary_coordinates = coords
+            trip_proposal.primary_destination = primary
+        else:
+            flash("No primary destination found.", "error")
+            return False
+
     departure_locations = json.loads(request.form.get("departure_location")) if request.form.get("departure_location") else []
 
     start_dates = request.form.getlist("start_date") or []
@@ -38,15 +58,7 @@ def set_details_from_request(trip_proposal):
 
     budget = request.form.get("budget") or None
     accommodation = request.form.get("accommodation") or None
-    transportation = request.form.get("transportation") or None
-    try:
-        if fetch_coordinates_for_destination(destinations[0]):
-            trip_proposal.primary_coordinates = fetch_coordinates_for_destination(destinations[0])
-            trip_proposal.primary_destination = destinations[0]
-    except Exception as e:
-        flash (str(e), "Primary Destination Does not exist")
-        return False
-    
+    transportation = request.form.get("transportation") or None    
 
     try:
         trip_proposal.destinations = destinations
@@ -67,21 +79,28 @@ def create_trip():
     if request.method == "POST":
         trip_name = request.form.get("trip_name")
         max_participants = request.form.get("max_participants")
-        #country_code = request.form.get("country_code")
-
+        
+        # check that mandatory fields are in 
         if not trip_name or not max_participants:
             flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.create_trip"))
+
+        # create new trip
+        destinations = json.loads(request.form.get("destinations"))
+        country_code = "err"#request.form.get("country_code")
+
+        print(type(destinations))
 
         try:
             new_trip = model.Proposal(
                 user_id=current_user.id,
                 title=trip_name,
                 max_participants=max_participants or 1,
-                #country_code=country_code
+                country_code=country_code,
+                destinations=destinations
             )
         except Exception as e:
-            flash(str(e), "error")
+            flash(str(e), "error:")
             return redirect(url_for("trip.create_trip"))
 
         if not set_details_from_request(new_trip):
@@ -99,7 +118,7 @@ def create_trip():
         db.session.commit()
         return redirect(url_for("trip.view_trip", trip_id=new_trip.id))
     
-    #countries = list(pycountry.countries)
+        #countries = list(pycountry.countries)
 
     return render_template("trip/create_trip.html")
 
@@ -150,7 +169,7 @@ def edit_trip(trip_id):
 
         trip_name = request.form.get("trip_name")
         max_participants = request.form.get("max_participants")
-        #country_code = request.form.get("country_code")
+        country_code = request.form.get("country_code")
 
         if not trip_name or not max_participants: # or not country_code:
             flash("Mandatory fields are missing", "error")
@@ -159,7 +178,7 @@ def edit_trip(trip_id):
         try:
             trip.title = trip_name
             trip.max_participants = int(max_participants)
-            #trip.country_code = country_code
+            trip.country_code = country_code
             status_str = request.form.get("status")
 
             if status_str:

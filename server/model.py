@@ -39,10 +39,10 @@ class User(flask_login.UserMixin, db.Model):
         back_populates="following",
     )
 
-    #@property
-    #def country(self):
-    #    country = pycountry.countries.get(alpha_3=self.country_code)
-    #    return country.name if country else "Unknown"
+    @property
+    def country(self):
+        country = pycountry.countries.get(alpha_3=self.country_code)
+        return country.name if country else "Unknown"
 
     @property
     def avatar(self):
@@ -91,7 +91,7 @@ class Proposal(db.Model):
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
-    country_code: Mapped[str] = mapped_column(String(3), nullable= False)
+    country_code: Mapped[str] = mapped_column(String(3), nullable= True)
     
     final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
