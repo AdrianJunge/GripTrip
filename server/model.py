@@ -9,7 +9,6 @@ from sqlalchemy import String, DateTime, ForeignKey, Integer, JSON, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 from sqlalchemy.orm import validates
-import pycountry
 import requests
 
 from . import db
@@ -25,7 +24,6 @@ class User(flask_login.UserMixin, db.Model):
     password: Mapped[str] = mapped_column(String(256))
     proposals: Mapped[List["Proposal"]] = relationship(back_populates="user")
     bio: Mapped[Optional[str]] = mapped_column(String(256), default="")
-    country_code: Mapped[str] = mapped_column(String(3), nullable= False)
     following: Mapped[List["User"]] = relationship(
         secondary=FollowingAssociation.__table__,
         primaryjoin=FollowingAssociation.follower_id == id,
@@ -38,11 +36,6 @@ class User(flask_login.UserMixin, db.Model):
         secondaryjoin=FollowingAssociation.follower_id == id,
         back_populates="following",
     )
-
-    @property
-    def country(self):
-        country = pycountry.countries.get(alpha_3=self.country_code)
-        return country.name if country else "Unknown"
 
     @property
     def avatar(self):
@@ -91,7 +84,6 @@ class Proposal(db.Model):
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
-    country_code: Mapped[str] = mapped_column(String(3), nullable= True)
     
     final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
     final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
@@ -104,11 +96,6 @@ class Proposal(db.Model):
     @property
     def timestamp(self):
         return self.timestamp_raw.replace(tzinfo=datetime.timezone.utc)
-    
-    @property
-    def country(self):
-        country = pycountry.countries.get(alpha_3=self.country_code)
-        return country.name if country else "Unknown"
 
     @property
     def participant_count(self):

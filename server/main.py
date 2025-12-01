@@ -3,7 +3,6 @@ from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 from . import db, model
 from datetime import timezone
-from countryinfo import CountryInfo
 from sqlalchemy.sql import func
 
 bp = Blueprint("main", __name__)
@@ -29,28 +28,19 @@ def index():
     )
     user_trips = db.session.execute(query).scalars().all()
 
-    #user_country = current_user.country
-    #try:
-     #   country = CountryInfo(user_country)
-      #  lat, lon = country.info()["latlng"]
-       # user_home = (lat, lon)
-    #except Exception as e:
-     #   user_home = None
-    
+    lat = 0
+    lon = 0
     trip_icons = []
     for trip in user_trips:
         participant_ids = {participant.user_id for participant in trip.participants}
         if current_user.id not in participant_ids:
             continue
         try:
-            country = CountryInfo(trip.country)
-            lat, lon = country.info()["latlng"]
             trip_icons.append({
                 "id": trip.id,
                 "title": trip.title,
                 "lat": lat,
                 "lon": lon,
-                "country_code": trip.country_code
             })
         except Exception as e:
             continue
@@ -59,7 +49,5 @@ def index():
         "main/index.html",
         overall_trips=overall_trips,
         user_trips=user_trips,
-        #user_home=user_home,
-        #user_country=user_country, # why was this needed?
         trip_icons=trip_icons
     )

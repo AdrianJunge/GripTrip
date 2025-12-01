@@ -1,9 +1,12 @@
+//creates map object
 const map = L.map('map');
 
+//sets tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
     }).addTo(map);
 
+    //creates custom icons
     var TravelIcon = L.Icon.extend({
         options: {
             iconSize: [40, 50],
@@ -11,27 +14,10 @@ const map = L.map('map');
             popupAnchor: [0, -35],            
         }
     });
-
     var greenIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_green.png'}),
     redIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_red.png'});
-    
-    var allCoords = [];
 
-
-    const h_lat = document.getElementById('map').dataset.lat;
-    const h_lon = document.getElementById('map').dataset.lon;
-    const h_country_name = document.getElementById('map').dataset.country;
-
-    if(h_lat && h_lon){
-        allCoords.push([h_lat, h_lon]);
-            L.marker([h_lat, h_lon], { icon: redIcon }).addTo(map)
-                .bindPopup("Home: <strong>" + h_country_name + "</strong>")
-                .openPopup();
-
-            map.setView([h_lat, h_lon], 5);
-    }
-
-    //double check if this works
+    //set all coordinates array and add markers for each trip
     const tripsData = document.getElementById("map").dataset.trips;
     let mapTrips = [];
     if (tripsData){
@@ -48,6 +34,7 @@ const map = L.map('map');
         });
     }
 
+    //set coordinates and map view
     if (allCoords.length === 0) {
         map.setView([54, 15], 3);
     } else if (allCoords.length === 1) {

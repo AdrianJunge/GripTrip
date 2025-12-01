@@ -21,18 +21,6 @@
                 <input type="number" class="form-control" id="maxParticipants" name="max_participants" min="1" value="{{ trip.max_participants }}">
             </div>
 
-           <!-- <div class="mb-3">
-                <label for="country_code" class="form-label">Destination Country</label>
-                <select id="country_code" name="country_code" class="form-select" required>
-                    {% for country in countries %}
-                        <option value="{{ country.alpha_3 }}"
-                            {% if trip.country_code == country.alpha_3 %}selected{% endif %}>
-                            {{ country.name }}
-                        </option>
-                    {% endfor %}
-                </select>
-            </div> --->
-
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
                 <select class="form-select" id="status" name="status">

@@ -1,9 +1,7 @@
 <div class= "map-wrapper">
     <div id="map"
-    {% if user_home %}
-    data-lat="{{ user_home[0] }}"
-    data-lon="{{ user_home[1] }}"
-    data-country="{{ user_country }}"
+    {% if trip_icons is not defined %}
+        data-trips='[]'
     {% endif %}
     data-trips='{{ trip_icons | tojson }}'>
     </div>
