@@ -1,8 +1,5 @@
 //creates map object disables default leaflet zoom lock
-const map = L.map('map', {
-    zoomSnap: 0,
-    zoomDelta: 0.25,
-});
+const map = L.map('map');
 
 //sets tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -14,7 +11,8 @@ const map = L.map('map', {
         options: {
             iconSize: [40, 50],
             iconAnchor: [20, 40],
-            popupAnchor: [0, -35],            
+            popupAnchor: [0, -35],
+            className: 'travel-icon'            
         }
     });
     var greenIcon = new TravelIcon({iconUrl: '/static/trip_icons/Map_pin_icon_green.png'}),
@@ -38,12 +36,23 @@ const map = L.map('map', {
                     .bindPopup(`<a href="/trip/${trip.id}">
                     <strong>${trip.title}</strong> </a>`);
                 }
-                else{
-                    L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
-                    .bindPopup(`<strong>${trip.title}</strong>`);
-                }
+                else{ //not a member of trip can join from map
+                    if(trip.is_full){
+                        L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
+                        .bindPopup(`<strong>${trip.title}</strong><br> Trip Full </br>`);
+                    }
+                    else{
+                        L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
+                        .bindPopup(`<strong>${trip.title}</strong>
+                        <br> <form action="/trip/join/${trip.id}" method="POST" style="margin-top:6px;">
+                        <button type="submit"
+                            class= "map-join-button">
+                            Join Trip?
+                        </button>
+                    </form>`);}
+                    }
+                allCoords.push([trip.lat, trip.lon]);
             }
-            allCoords.push([trip.lat, trip.lon]);
         });
     }
 
@@ -56,6 +65,6 @@ const map = L.map('map', {
         const bounds = L.latLngBounds(allCoords);
         map.fitBounds(bounds, { padding: [20, 20] });
         setTimeout(function () {
-            map.setZoom(map.getZoom() + 0.25);
+            map.setZoom(map.getZoom() + 0.5);
         }, 200);
     }

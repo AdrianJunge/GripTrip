@@ -30,7 +30,7 @@ def index():
 
     #include trips for user to be displayed on map
     trip_icons = []
-    for trip in overall_trips:
+    for trip in overall_trips + user_trips:
         participant_ids = {participant.user_id for participant in trip.participants}
         coordinates = trip.primary_coordinates
         if not coordinates:
@@ -44,7 +44,8 @@ def index():
                 "title": trip.title,
                 "lat": lat,
                 "lon": lon,
-                "available_to_user": current_user.id in participant_ids
+                "available_to_user": current_user.id in participant_ids,
+                "is_full": trip.participant_count >= trip.max_participants
             })
         except Exception as e:
             continue
