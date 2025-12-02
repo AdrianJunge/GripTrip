@@ -28,19 +28,23 @@ def index():
     )
     user_trips = db.session.execute(query).scalars().all()
 
-    lat = 0
-    lon = 0
+    #include trips for user to be displayed on map
     trip_icons = []
-    for trip in user_trips:
+    for trip in overall_trips:
         participant_ids = {participant.user_id for participant in trip.participants}
-        if current_user.id not in participant_ids:
+        coordinates = trip.primary_coordinates
+        if not coordinates:
             continue
+        
+
+        lat, lon = coordinates
         try:
             trip_icons.append({
                 "id": trip.id,
                 "title": trip.title,
                 "lat": lat,
                 "lon": lon,
+                "available_to_user": current_user.id in participant_ids
             })
         except Exception as e:
             continue

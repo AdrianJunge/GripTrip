@@ -1,9 +1,5 @@
 <div class= "map-wrapper">
-    <div id="map"
-    {% if trip_icons is not defined %}
-        data-trips='[]'
-    {% endif %}
-    data-trips='{{ trip_icons | tojson }}'>
-    </div>
+    <div id="map" 
+    data-trips='{{ trip_icons | tojson }}'></div>
     <div id="map-margin"></div>
 </div>
