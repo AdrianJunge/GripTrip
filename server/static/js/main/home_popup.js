@@ -33,28 +33,29 @@ const map = L.map('map');
                 const curr_icon = trip.available_to_user ? greenIcon : redIcon;
                 if (curr_icon === greenIcon){
                     L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
-                    .bindPopup(`<a href="/trip/${trip.id}">
-                    <strong>${trip.title}</strong> </a>`);
+                    .bindPopup(`<div class="map-popup-row">
+                    <strong class="map-popup-title">${trip.title}</strong>
+                    <a href="/trip/${trip.id}" class="map-view-button">View</a>
+                    </div>
+                </div>`);
                 }
                 else{ //not a member of trip can join from map
-                    if(trip.is_full){
+                    if(!trip.is_full){
                         L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
-                        .bindPopup(`<strong>${trip.title}</strong><br> Trip Full </br>`);
-                    }
-                    else{
-                        L.marker([trip.lat, trip.lon], { icon: curr_icon }).addTo(map)
-                        .bindPopup(`<strong>${trip.title}</strong>
-                        <br> <form action="/trip/join/${trip.id}" method="POST" style="margin-top:6px;">
-                        <button type="submit"
-                            class= "map-join-button">
-                            Join Trip?
-                        </button>
-                    </form>`);}
-                    }
+                        .bindPopup(`
+                        <div class="map-popup-row">
+                            <strong class="map-popup-title">${trip.title}</strong>
+                            <form action="/trip/join/${trip.id}" method="POST">
+                                <button type="submit" class="map-join-button">Join?</button>
+                            </form>
+                        </div>
+                    `);
+                    }                        
+                }
                 allCoords.push([trip.lat, trip.lon]);
             }
-        });
-    }
+        }
+    )};
 
     //set coordinates and map view relative to trips
     if (allCoords.length === 0) {

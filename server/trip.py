@@ -84,6 +84,10 @@ def create_trip():
         if not trip_name or not max_participants:
             flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.create_trip"))
+        
+        if len(trip_name) > 25:
+            flash("Trip name too long (max 25 characters)", "error")
+            return redirect(url_for("trip.create_trip"))
 
         # create new trip
         try:
