@@ -5,14 +5,21 @@ To start it with the remote virtual database from the telematics lab just use th
 
 ## Information
 ### Author names
-- Adrian Junge
-- Liam van Doorn
-- Sam ???
+- Adrian Junge | XXXXXX
+- Liam van Doorn | 100575986
+- Sam Parker | XXXXX
 
 ### Additional functionality to get evaluated
-- UI/UX design
-- trip map
-- async update of trip user roles
+- **UI/UX design**
+There's a base main view containing the most frequent functionality of the application, such as handling, searching and seeing active trips. 
+Other less frequently used functionality is shown in the navbar such as user info etc.
+
+- **trip map**
+The dashboard contains a leaflet map that gets populated for each authorised trip the user can view. 
+The leaflet map contains icons that can be howevered to show the trips associated to it. 
+
+- **async update of trip user roles**
+Uses 
 
 ### Testing
 The `init_db.py` file adds some predefined users and trips to the application.
@@ -21,6 +28,9 @@ Example users:
 - username: mary@mary | password: a
 
 ### Declaration of use of AI
-TODO: what did we use and how?
-- Github copilot
-- ChatGPT
+**Github copilot:**
+Used for auto completion. 
+
+**ChatGPT:**
+Used for debugging and error interpertation. 
+

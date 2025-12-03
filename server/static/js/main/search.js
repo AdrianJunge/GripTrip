@@ -8,9 +8,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!q) {
             results.style.display = "none";
             results.innerHTML = "";
+            document.querySelectorAll('.trip-card').forEach(t => t.style.display = 'block');
+
+            if (window.filterMapMarkers) {
+                const allIds = Array.from(document.querySelectorAll('.trip-card'))
+                    .map(t => t.getAttribute('trip-id'));
+                window.filterMapMarkers(allIds);
+            }
+            return;
         }
 
-        const searchTerm = searchBar.value.toLowerCase();
+        const searchTerm = q;
         const trip_cards = document.querySelectorAll('.trip-card');
 
         trip_cards.forEach(function (trip) {
@@ -19,21 +27,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (searchTerms.some(term => term.includes(searchTerm))) {
                 trip.style.display = 'block';
 
-                filteredTrips.push({
-                    id: trip.getAttribute('trip-id'),
-                    title: trip.getAttribute('trip-name'),
-                });
-                results.innerHTML = filteredTrips
-                    .map(t => `<li data-id="${t.id}">${t.title}</li>`)
-                    .join("");
-                results.style.display = filteredTrips.length ? "block" : "none";
+                if (!filteredTrips.find(t => t.id === trip.getAttribute('trip-id'))) {
+                    filteredTrips.push({
+                        id: trip.getAttribute('trip-id'),
+                        title: trip.getAttribute('trip-name'),
+                    });
+                }
             } else {
                 trip.style.display = 'none';
             }
         });
-        
-        const target = document.getElementById("dashboard-handle");
-        target.scrollIntoView({ behavior: "smooth" });
+
+        results.innerHTML = filteredTrips
+            .map(t => `<li data-id="${t.id}">${t.title}</li>`)
+            .join("");
+        results.style.display = filteredTrips.length ? "block" : "none";
+
+        console.log("Filtered trips:", filteredTrips);
+
+        if (window.filterMapMarkers) {
+            const visibleIds = filteredTrips.map(t => String(t.id));
+            window.filterMapMarkers(visibleIds);
+        }
     });
     
     results.addEventListener("click", (e) => {

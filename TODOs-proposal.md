@@ -124,12 +124,12 @@
 
 
 # Additional functionality
-- [ ] user can check a map where they had their trips - leaflet.js
+- [x] user can check a map where they had their trips - leaflet.js
 - [x] "brilliant" user interface
     - remarkable appearance at level of current standards for professional applications
 
 # More
-- [ ] Fix search functionality
+- [ ] Fix search term hiding/showing markers on map
 - [ ] CSRF protections for every POST form
     => with `{{ csrf_token() }}`
 - [ ] Look if every attribute we have defined in the models.py is actually used
