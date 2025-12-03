@@ -42,6 +42,12 @@
     border-left: 4px solid #dd6b20;
 }
 
+.notification.message {
+    background: #fed7d7;
+    color: #c53030;
+    border-left: 4px solid #e53e3e;
+}
+
 .notification .close-btn {
     margin-left: auto;
     background: transparent;
