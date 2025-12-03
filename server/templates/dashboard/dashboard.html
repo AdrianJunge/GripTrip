@@ -4,8 +4,8 @@
 {% endblock %}
 
 <div class="dashboard-container">
-    <div class="dashboard-handle"></div>
-    <div class="trips-grid">
+    <div class="dashboard-handle" id="dashboard-handle"></div>
+    <div class="trips-grid" id="trips-grid">
         <h2>Your Trips</h2>
         {% if user_trips|length == 0 %}
             <p>You have not created any trips yet.</p>
@@ -23,3 +23,6 @@
     </div>
     </div>
 </div>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main//dashboard_scroll.js') }}"></script>
+{% endblock %}

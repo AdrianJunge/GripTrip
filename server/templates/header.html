@@ -1,6 +1,4 @@
-<div class="header"
-     data-trips='{{ user_trips | map(attribute="id") | list | tojson }}'
-     data-trip-titles='{{ user_trips | map(attribute="title") | list | tojson }}'>
+<div class="header">
     <div class="container">
         <a href="{{ url_for('main.index') }}" class="logo">{{ app_name }}</a>
 

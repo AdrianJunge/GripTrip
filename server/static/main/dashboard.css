@@ -20,4 +20,10 @@
     background-color: #afafaf;
     border-radius: 3px;
     margin: 20px auto;
+
+}
+
+.dashboard-handle:hover {
+    cursor: pointer;
+    transform: scaleX(1.6);
 }

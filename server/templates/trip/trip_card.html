@@ -1,4 +1,4 @@
-<div id="trip-{{ trip.id }}" class="trip-card" search-terms='{{ ([trip.title] + trip.destinations) | tojson }}'>
+<div id="trip-{{ trip.id }}" trip-id="{{ trip.id }}" trip-name="{{ trip.title }}" class="trip-card" search-terms='{{ ([trip.title] + trip.destinations) | tojson }}'>
     <div>
         <div class="trip-card-header">{{ trip.title or 'Untitled trip' }}</div>
         <div class="trip-card-body">
