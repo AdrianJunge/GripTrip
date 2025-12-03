@@ -56,7 +56,7 @@
 
             <div class="mb-3">
                 <div class="d-flex gap-2">
-                    <input name="destination" class="form-control tagify {% if trip.is_final('destinations') %}opacity-50{% endif %}" placeholder="Add destinations" value="{{ trip.destinations|join(',') if trip.destinations else '' }}" {% if trip.is_final('destinations') %}disabled{% endif %}>
+                    <input name="destinations" class="form-control tagify {% if trip.is_final('destinations') %}opacity-50{% endif %}" placeholder="Add destinations" value="{{ trip.destinations|join(',') if trip.destinations else '' }}" {% if trip.is_final('destinations') %}disabled{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('destinations') else 'success' }} btn-sm toggle-final-btn" data-field="destinations" data-action="{{ 'unfinalize' if trip.is_final('destinations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('destinations') else 'Finalize' }}</button>
                 </div>
                 <div class="form-text">Press Enter or comma to add multiple destinations.</div>

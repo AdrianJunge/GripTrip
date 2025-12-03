@@ -15,9 +15,6 @@ def set_destination_coordinates(trip_proposal):
         primary = trip_proposal.destinations[0]
         coords = fetch_coordinates_for_destination(primary)
         if coords == None: raise ValueError("There's no such destination")
-        
-        print("coords: ", coords)
-        print("Primary: ", primary)
 
         if coords:
             trip_proposal.primary_coordinates = coords
@@ -68,6 +65,7 @@ def set_details_from_request(trip_proposal):
         trip_proposal.departure_locations = departure_locations
         trip_proposal.dates = dates
         set_destination_coordinates(trip_proposal)
+        db.session.commit()
     except Exception as e:
         flash (str(e), "error")
         return False
@@ -191,6 +189,7 @@ def edit_trip(trip_id):
             return redirect(url_for("trip.edit_trip", trip_id=trip.id))
 
         if not set_details_from_request(trip):
+            flash("Error setting trip details.", "error")
             return redirect(url_for("trip.edit_trip", trip_id=trip.id))
 
         db.session.commit()

@@ -129,15 +129,14 @@
     - remarkable appearance at level of current standards for professional applications
 
 # More
+- [ ] Fix search functionality
 - [ ] CSRF protections for every POST form
     => with `{{ csrf_token() }}`
-- [ ] Can't save/edit trips
 - [ ] Look if every attribute we have defined in the models.py is actually used
     => e.g. `final_date` and `final_departure_location` are currently unused - either remove or use them
 - [ ] Fix Bugs
     - Finalize button in edit view redirected nicht zu view_trip sobald der trip final gesetzt ist
     - Admins sollten noch den status ändern können auch wenn trip finalized ist
-- [ ] Fix search functionality
 - [ ] Finalize `README.md`
 
 # Requirements
