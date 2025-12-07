@@ -4,6 +4,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from flask_login import LoginManager
+from flask_wtf.csrf import CSRFProtect
 
 class Base(DeclarativeBase):
   pass
@@ -11,11 +12,12 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 VIRT_LAB_DB = os.environ.get("VIRT_LAB_DB", "0") == "1"
+csrf = CSRFProtect()
 
 def create_app(test_config=None):
     app = Flask(__name__)
-
     app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
+    csrf.init_app(app)
 
     if VIRT_LAB_DB:
       DB_USER = "26_webapp_24"

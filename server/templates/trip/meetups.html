@@ -24,10 +24,14 @@
 
                                         {% if is_participant %}
                                             <form action="{{ url_for('trip.leave_meetup', trip_id=trip.id, meetup_id=m.id) }}" method="post" style="display:inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
                                                 <button class="btn btn-sm btn-outline-danger">Leave</button>
                                             </form>
                                         {% else %}
                                             <form action="{{ url_for('trip.join_meetup', trip_id=trip.id, meetup_id=m.id) }}" method="post" style="display:inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                
                                                 <button class="btn btn-sm btn-outline-primary">Join</button>
                                             </form>
                                         {% endif %}

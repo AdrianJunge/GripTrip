@@ -79,6 +79,8 @@
     </div>
 
     <form action="{{ url_for('trip.post_message', trip_id=trip.id) }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
         <input type="hidden" id="response_to" name="response_to" value="">
         <textarea id="message-input" name="message_content" rows="3" placeholder="Write a message..."></textarea>
         <div class="composer-actions">

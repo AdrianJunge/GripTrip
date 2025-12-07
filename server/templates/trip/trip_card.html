@@ -31,6 +31,8 @@
 
     {% if current_user.id != trip.user.id and (trip.participants | selectattr("user_id", "equalto", current_user.id) | list | length) == 0 %}
         <form action="{{ url_for('trip.join', trip_id=trip.id) }}" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
             <button type="submit" class="trip-button" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
         </form>
     {% else %}

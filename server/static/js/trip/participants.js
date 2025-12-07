@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
     document.querySelectorAll('.role-select').forEach(function(sel){
         sel.addEventListener('change', function(e){
             const userId = sel.getAttribute('data-user-id');
@@ -6,7 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(`/trip/${window.currentTripId}/participant/${userId}/role`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({ role: newRole })
             }).then(r => r.json()).then(data => {
                 if (data && data.success) {
@@ -36,7 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch(`/trip/${window.currentTripId}/participant/${userId}/role`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({ role: 'EDITOR' })
             }).then(r => r.json()).then(data => {
                 if (data && data.success) {

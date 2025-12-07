@@ -127,8 +127,6 @@
     - remarkable appearance at level of current standards for professional applications
 
 # More
-- [ ] CSRF protections for every POST form
-    => with `{{ csrf_token() }}`
 - [ ] Look if every attribute we have defined in the models.py is actually used
     => e.g. `final_date` and `final_departure_location` are currently unused - either remove or use them
     => remove followers stuff

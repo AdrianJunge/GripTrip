@@ -9,6 +9,8 @@
     <div class="container">
         <h1>Create meetup for: {{ trip.title }}</h1>
         <form action="{{ url_for('trip.create_meeting', trip_id=trip.id) }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
             <div class="card mb-3">
                 <div class="card-body">
                     <h5 class="card-title">Mandatory</h5>

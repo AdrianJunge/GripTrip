@@ -7,6 +7,8 @@
 {% block content %}
 <h1>Edit Your Profile</h1>
 <form method="POST" action="{{ url_for('profile.edit_profile') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
     <div class="card mb-3">
         <div class="card-body">
 

@@ -35,6 +35,8 @@
                     </form>
                 {% endif %}
                 <form action="{{ url_for('trip.leave_trip', trip_id=trip.id) }}" method="POST" id="leave-trip">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
                     <button type="submit" class="btn btn-danger">
                         Leave Trip
                     </button>
@@ -234,6 +236,8 @@
                                         {% if current_role and current_role.name == 'ADMIN' %}
                                             <form action="{{ url_for('trip.change_participant_role', trip_id=trip.id, user_id=p.user.id) }}"
                                                 method="post" style="display:inline;">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            
                                                 <select name="role" class="form-select form-select-sm" onchange="this.form.submit()">
                                                     {% for r in ['VIEWER','EDITOR','ADMIN'] %}
                                                         <option value="{{ r }}" {% if p.permission.name == r %}selected{% endif %}>{{ r.title() }}</option>

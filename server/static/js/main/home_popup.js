@@ -24,6 +24,8 @@ if (tripsData){
     mapTrips = JSON.parse(tripsData);
 }
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
 let tripGroups = {}
 mapTrips.forEach(function (trip) {
     if(!trip.lat || !trip.lon) return;
@@ -52,6 +54,8 @@ Object.keys(tripGroups).forEach(function (key) {
                 popupContent += `<br><div class="map-popup-row">
                     <strong class="map-popup-title">${trip.title}</strong>
                     <form action="/trip/join/${trip.id}" method="POST">
+                        <input type="hidden" name="csrf_token" value="${csrfToken}"/>
+            
                         <button type="submit" class="map-join-button">Join?</button>
                     </form>
                 </div><br>`;
