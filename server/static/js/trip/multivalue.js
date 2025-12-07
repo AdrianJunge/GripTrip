@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const endInput = widget.querySelector('.mv-end');
         const addBtn = widget.querySelector('.mv-add');
         const list = widget.querySelector('.mv-list');
+        const isFinalized = widget.getAttribute('data-finalized') === 'true';
 
         function renderRangeDisplay(s, e) {
             const disp = document.createElement('div');
@@ -22,19 +23,21 @@ document.addEventListener('DOMContentLoaded', function () {
             disp.style.padding = '0.45rem 0.6rem';
             disp.textContent = s + ' → ' + e;
 
-            const close = document.createElement('button');
-            close.type = 'button';
-            close.className = 'btn-close btn-close-white btn-sm ms-2';
-            close.style.marginLeft = '6px';
-            close.addEventListener('click', function () {
-                const hs = list.querySelector('input[type="hidden"][name="start_date"][value="' + s + '"]');
-                const he = list.querySelector('input[type="hidden"][name="end_date"][value="' + e + '"]');
-                if (hs) hs.remove();
-                if (he) he.remove();
-                disp.remove();
-            });
+            if (!isFinalized) {
+                const close = document.createElement('button');
+                close.type = 'button';
+                close.className = 'btn-close btn-close-white btn-sm ms-2';
+                close.style.marginLeft = '6px';
+                close.addEventListener('click', function () {
+                    const hs = list.querySelector('input[type="hidden"][name="start_date"][value="' + s + '"]');
+                    const he = list.querySelector('input[type="hidden"][name="end_date"][value="' + e + '"]');
+                    if (hs) hs.remove();
+                    if (he) he.remove();
+                    disp.remove();
+                });
+                disp.appendChild(close);
+            }
 
-            disp.appendChild(close);
             list.appendChild(disp);
         }
 

@@ -51,20 +51,30 @@ def set_details_from_request(trip_proposal):
     departure_locations = json.loads(request.form.get("departure_location")) if request.form.get("departure_location") else []
     start_dates = request.form.getlist("start_date") or []
     end_dates = request.form.getlist("end_date") or []
-    dates = list(zip(start_dates, end_dates))
-    budget = request.form.get("budget") or None
+    dates = [[s, e] for s, e in zip(start_dates, end_dates)] if start_dates and end_dates else []
+    
+    budget_str = request.form.get("budget")
+    budget = float(budget_str) if budget_str else None
     accommodation = request.form.get("accommodation") or None
     transportation = request.form.get("transportation") or None    
 
     try:
-        trip_proposal.destinations = destinations
-        trip_proposal.budget = budget
-        trip_proposal.accommodation = accommodation
-        trip_proposal.transportation = transportation
-        trip_proposal.activities = activities
-        trip_proposal.departure_locations = departure_locations
-        trip_proposal.dates = dates
-        set_destination_coordinates(trip_proposal)
+        if trip_proposal.destinations != destinations:
+            trip_proposal.destinations = destinations
+            set_destination_coordinates(trip_proposal)
+        if trip_proposal.budget != budget:
+            trip_proposal.budget = budget
+        if trip_proposal.accommodation != accommodation:
+            trip_proposal.accommodation = accommodation
+        if trip_proposal.transportation != transportation:
+            trip_proposal.transportation = transportation
+        if trip_proposal.activities != activities:
+            trip_proposal.activities = activities
+        if trip_proposal.departure_locations != departure_locations:
+            trip_proposal.departure_locations = departure_locations
+        if trip_proposal.dates != dates:
+            trip_proposal.dates = dates
+        
         db.session.commit()
     except Exception as e:
         flash (str(e), "error")
@@ -78,7 +88,6 @@ def create_trip():
         trip_name = request.form.get("trip_name")
         max_participants = request.form.get("max_participants")
         
-        # check that mandatory fields are in 
         if not trip_name or not max_participants:
             flash("Mandatory fields are missing", "error")
             return redirect(url_for("trip.create_trip"))
@@ -87,7 +96,6 @@ def create_trip():
             flash("Trip name too long (max 25 characters)", "error")
             return redirect(url_for("trip.create_trip"))
 
-        # create new trip
         try:
             new_trip = model.Proposal(
                 user_id=current_user.id,
@@ -144,8 +152,12 @@ def edit_trip(trip_id):
     all_final = all(trip.is_final(f) for f in required_fields)
 
     if request.method == "POST":
-        if trip.status in (model.ProposalStatus.FINALIZED, model.ProposalStatus.CANCELLED):
-            flash("This trip is finalized or cancelled and cannot be edited.", "error")
+        if trip.status == model.ProposalStatus.CANCELLED:
+            flash("This trip is cancelled and cannot be edited.", "error")
+            return redirect(url_for("trip.view_trip", trip_id=trip.id))
+        
+        if trip.status == model.ProposalStatus.FINALIZED and not trip.has_permission(current_user, model.ProposalParticipantRole.ADMIN):
+            flash("This trip is finalized and cannot be edited. Only admins can modify finalized trips.", "error")
             return redirect(url_for("trip.view_trip", trip_id=trip.id))
 
         if request.form.get('toggle_final'):
@@ -200,6 +212,7 @@ def edit_trip(trip_id):
         trip=trip,
         ProposalStatus=model.ProposalStatus,
         all_final=all_final,
+        ProposalParticipantRole=model.ProposalParticipantRole,
     )
 
 

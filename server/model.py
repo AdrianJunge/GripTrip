@@ -140,9 +140,9 @@ class Proposal(db.Model):
 
         if key == "dates":
             for date_range in value:
-                if (not isinstance(date_range, tuple) or len(date_range) != 2 or
+                if (not isinstance(date_range, (tuple, list)) or len(date_range) != 2 or
                     not all(isinstance(d, str) for d in date_range)):
-                    raise ValueError("Each date range must be a tuple of two ISO format datetime strings.")
+                    raise ValueError("Each date range must be a tuple or list of two ISO format datetime strings.")
                 start = datetime.datetime.fromisoformat(date_range[0])
                 end = datetime.datetime.fromisoformat(date_range[1])
                 if start >= end:

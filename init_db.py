@@ -37,6 +37,7 @@ def init_database():
             user=testuser,
             title="Test Trip",
             max_participants=5,
+            destinations=["New York", "Los Angeles", "Chicago"],
         )
 
         testuser_participant = ProposalParticipant(
@@ -56,6 +57,7 @@ def init_database():
             user=mary,
             title="Mary's Trip",
             max_participants=3,
+            destinations=["Paris", "London", "Berlin"],
         )
         mary_participant_another_trip = ProposalParticipant(
             user=mary,

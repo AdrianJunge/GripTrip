@@ -1,7 +1,8 @@
 # UC3M - Web-App-Project
 ## Starting the app
-To start the project locally just use the `start.sh`.
-To start it with the remote virtual database from the telematics lab just use the `start_virtlab.sh`.
+To start the project with local docker setup use the `start.sh`.
+To start the project with the remote database from the telematics lab use the `start_virtlab.sh`.
+Both need and use `python3 -m venv`.
 
 ## Information
 ### Author names
@@ -33,4 +34,3 @@ Used for auto completion.
 
 **ChatGPT:**
 Used for debugging and error interpertation. 
-

@@ -26,7 +26,7 @@
                 {% if trip.has_permission(current_user, ProposalParticipantRole.EDITOR) %}
                     <form action="{{ url_for('trip.edit_trip', trip_id=trip.id) }}" method="GET" id="edit-trip">
                         <button class="btn btn-primary"
-                            {% if trip.status == trip.status.__class__.FINALIZED or trip.status == trip.status.__class__.CANCELLED %}
+                            {% if trip.status == trip.status.__class__.CANCELLED or (trip.status == trip.status.__class__.FINALIZED and not trip.has_permission(current_user, ProposalParticipantRole.ADMIN)) %}
                                 disabled
                             {% endif %}
                         >

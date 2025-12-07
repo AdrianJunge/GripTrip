@@ -4,8 +4,6 @@
 - [x] Decide specialized travel app
     => ski trips
 - [x] Setup VS Code "shared coding"
-- [ ] Which special attributes might be needed for Skiing??
-- [ ] discuss with teachers how many points you could get with the features you plan to implement
 
 # Mandatory functionality
 - [x] managing user accounts
@@ -129,14 +127,12 @@
     - remarkable appearance at level of current standards for professional applications
 
 # More
-- [ ] Fix search term hiding/showing markers on map
 - [ ] CSRF protections for every POST form
     => with `{{ csrf_token() }}`
 - [ ] Look if every attribute we have defined in the models.py is actually used
     => e.g. `final_date` and `final_departure_location` are currently unused - either remove or use them
-- [ ] Fix Bugs
-    - Finalize button in edit view redirected nicht zu view_trip sobald der trip final gesetzt ist
-    - Admins sollten noch den status ändern können auch wenn trip finalized ist
+    => remove followers stuff
+- [ ] Fix search term hiding/showing markers on map
 - [ ] Finalize `README.md`
 
 # Requirements
@@ -145,14 +141,4 @@
 - [x] views of application are clear and easy to use
 - [x] potential error situations are properly handled, giving users feedback when appropriate
 - [x] proper access controls
-- [ ] secure application (no SQLI, no XSS)
-
-
-# Statement about AI
-- [ ] Whether they used generative artificial intelligence tools in the development of their project
-- [ ] If they used them, the name of the generative artificial tool or tools they used, how they used them, for what purposes and *in which parts of the code.*
-    e.g.
-        You can ask it about fragments of code you don't understand.
-        You can ask it to look for errors in pieces of code you wrote.
-        You can use it as an auto-completion assistant in your development environment, in order to get quick suggestions of short code fragments as you type.
-        You can ask it to produce a few lines of code to solve a specific problem.
+- [x] secure application (no SQLI, no XSS)
