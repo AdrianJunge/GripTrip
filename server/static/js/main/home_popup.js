@@ -24,40 +24,50 @@ if (tripsData){
     mapTrips = JSON.parse(tripsData);
 }
 
-if (mapTrips.length > 0) {
-    mapTrips.forEach(function (trip) {
-        if (trip.lat && trip.lon) {
-            const curr_icon = trip.available_to_user ? greenIcon : redIcon;
+let tripGroups = {}
+mapTrips.forEach(function (trip) {
+    if(!trip.lat || !trip.lon) return;
+    const key = `${trip.lat},${trip.lon}`;
+    if(!tripGroups[key]) tripGroups[key] = [];
+    if (!tripGroups[key].some(t => t.id === trip.id)) {
+        tripGroups[key].push(trip);
+    } 
+});
 
-            const marker = L.marker([trip.lat, trip.lon], { icon: curr_icon });
+Object.keys(tripGroups).forEach(function (key) {
+    const group = tripGroups[key];
+    const [lat, lon] = key.split(',').map(Number);
+    const isGreen = group.some(t => t.available_to_user);
+    const iconColor = isGreen ? greenIcon : redIcon;
 
-            if (curr_icon === greenIcon) {
-                marker.bindPopup(`
-                    <div class="map-popup-row">
-                        <strong class="map-popup-title">${trip.title}</strong>
-                        <a href="/trip/${trip.id}" class="map-view-button">View</a>
-                    </div>
-                `);
-                marker.addTo(map);
-                window.mapMarkers[String(trip.id)] = { marker: marker, added: true };
-            } else {
-                if (!trip.is_full) {
-                    marker.bindPopup(`
-                        <div class="map-popup-row">
-                            <strong class="map-popup-title">${trip.title}</strong>
-                            <form action="/trip/join/${trip.id}" method="POST">
-                                <button type="submit" class="map-join-button">Join?</button>
-                            </form>
-                        </div>
-                    `);
-                    marker.addTo(map);
-                    window.mapMarkers[String(trip.id)] = { marker: marker, added: true };
-                }
+    let popupContent = '';
+    group.forEach(function (trip) {
+        if(trip.available_to_user){
+            popupContent += `<br><div class="map-popup-row">
+                <strong class="map-popup-title">${trip.title}</strong>
+                <a href="/trip/${trip.id}" class="map-view-button">View</a>
+            </div><br>`;
+        } else {
+            if(!trip.is_full){
+                popupContent += `<br><div class="map-popup-row">
+                    <strong class="map-popup-title">${trip.title}</strong>
+                    <form action="/trip/join/${trip.id}" method="POST">
+                        <button type="submit" class="map-join-button">Join?</button>
+                    </form>
+                </div><br>`;
             }
-            allCoords.push([trip.lat, trip.lon]);
         }
     });
-}
+    popupContent += '';
+    const marker = L.marker([lat, lon], { icon: iconColor });
+    allCoords.push([lat, lon]);
+
+    marker.bindPopup(popupContent);
+    marker.addTo(map);
+    group.forEach(function (trip) {
+        window.mapMarkers[String(trip.id)] = { marker: marker, added: true };
+    });
+});
 
 if (allCoords.length === 0) {
     map.setView([54, 15], 4);

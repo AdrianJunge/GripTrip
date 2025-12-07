@@ -7,7 +7,7 @@ To start it with the remote virtual database from the telematics lab just use th
 ### Author names
 - Adrian Junge | XXXXXX
 - Liam van Doorn | 100575986
-- Sam Parker | XXXXX
+- Sam Parkin | 100577769
 
 ### Additional functionality to get evaluated
 - **UI/UX design**
@@ -15,8 +15,8 @@ There's a base main view containing the most frequent functionality of the appli
 Other less frequently used functionality is shown in the navbar such as user info etc.
 
 - **trip map**
-The dashboard contains a leaflet map that gets populated for each authorised trip the user can view. 
-The leaflet map contains icons that can be howevered to show the trips associated to it. 
+The dashboard contains a leaflet map that gets populated for each authorized trip the user can view. 
+The leaflet map contains icons that can be hovered to show the trips associated to it. 
 
 - **async update of trip user roles**
 Uses 

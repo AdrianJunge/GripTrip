@@ -25,3 +25,42 @@
 
     background-color: tomato;
   }
+
+.map-popup-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    max-width: fit-content;
+    flex-wrap: nowrap;
+    margin-top: 6px;
+}
+
+.map-popup-title {
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow-wrap: break-word;
+    word-break: normal;
+}
+
+.map-join-button {
+    padding: 6px 10px;
+    background-color: #4796d3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.map-view-button{
+    padding: 6px 10px;
+    background-color: #4796d3;
+    color: white !important;
+    border: none;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
