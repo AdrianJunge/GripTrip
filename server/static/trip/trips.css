@@ -38,6 +38,14 @@
     font-size: 0.9rem;
 }
 
+.trip-button-join {
+    background-color: #6c757d;
+}
+
+.trip-button-join:hover:not(:disabled) {
+    background-color: #5a6268;
+}
+
 .trip-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.12);

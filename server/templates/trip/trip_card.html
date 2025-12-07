@@ -33,7 +33,7 @@
         <form action="{{ url_for('trip.join', trip_id=trip.id) }}" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             
-            <button type="submit" class="trip-button" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
+            <button type="submit" class="trip-button trip-button-join" {% if trip.participants|length >= trip.max_participants %}disabled{% endif %}>Join Trip</button>
         </form>
     {% else %}
         <a href="{{ url_for('trip.view_trip', trip_id=trip.id) }}" class="trip-button">View Trip</a>
