@@ -80,11 +80,9 @@
         {% endif %}
     {% endmacro %}
 
-    <section class="posts-section">
-        {% set display_name = 'you' if current_user.id == user.id else user.username %}
-
-        {{ trip_section("Trips created by " ~ display_name, user.proposals, "No trips proposed yet.") }}
-        {{ trip_section("Other trips joined by " ~ display_name, trips_joined, "No trips joined yet.") }}
+    <section class="posts-section" style= "margin-top: 20px;">
+        {{ trip_section("Trips Created: ", user.proposals, "No trips proposed yet.") }}
+        {{ trip_section("Trips Joined: ", trips_joined, "No trips joined yet.") }}
     </section>
 </div>
 {% endblock %}
