@@ -33,7 +33,7 @@ Example users:
 
 ### Declaration of use of AI
 **Github copilot:**
-Used for auto completion. 
+Used for code autocompletion.
 
 **ChatGPT:**
-Used for debugging and error interpertation. 
+Used for debugging, explaining error messages and helping with CSS styling.

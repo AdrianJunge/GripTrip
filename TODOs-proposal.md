@@ -126,10 +126,6 @@
 - [x] "brilliant" user interface
     - remarkable appearance at level of current standards for professional applications
 
-# More
-- [ ] Fix search term hiding/showing markers on map
-- [ ] Finalize `README.md`
-
 # Requirements
 - [x] developed in Python with Flask
 - [x] must work with infra from lab with assigned database
