@@ -80,13 +80,11 @@ class Proposal(db.Model):
     accommodation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
     transportation: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
 
-    activities: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
-    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     
-    final_date: Mapped[Optional[datetime.datetime]] = mapped_column(DateTime(timezone=True), default=None, nullable=True)
-    final_departure_location: Mapped[Optional[str]] = mapped_column(String(256), default=None, nullable=True)
+    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    activities: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
 
     finalized_flags: Mapped[dict] = mapped_column(
         MutableDict.as_mutable(JSON),
@@ -212,22 +210,14 @@ class ProposalParticipant(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), primary_key=True)
     proposal: Mapped["Proposal"] = relationship(back_populates="participants")
     user: Mapped["User"] = relationship()
-    joined_at_raw: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(),
-        default=lambda: datetime.datetime.now(datetime.timezone.utc)
-    )
     permission: Mapped[ProposalParticipantRole] = mapped_column(SQLAlchemyEnum(ProposalParticipantRole), default=ProposalParticipantRole.VIEWER)
 
-    @property
-    def joined_at(self):
-        return self.joined_at_raw.replace(tzinfo=datetime.timezone.utc)
-        
 
 class Meetup(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     proposal_id: Mapped[int] = mapped_column(ForeignKey("proposal.id"))
     proposal: Mapped["Proposal"] = relationship()
-    
+
     title: Mapped[str] = mapped_column(String(256))
     location: Mapped[str] = mapped_column(String(256))
     date_raw: Mapped[datetime.datetime] = mapped_column(
@@ -237,10 +227,6 @@ class Meetup(db.Model):
 
     description: Mapped[Optional[str]] = mapped_column(String(512), default="")
     
-    created_at_raw: Mapped[datetime.datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(),
-        default=lambda: datetime.datetime.now(datetime.timezone.utc)
-    )
     created_by_user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     created_by_user: Mapped["User"] = relationship()
     participants: Mapped[List["MeetupParticipant"]] = relationship(back_populates="meetup")
@@ -248,10 +234,6 @@ class Meetup(db.Model):
     @property
     def date(self):
         return self.date_raw.replace(tzinfo=datetime.timezone.utc)
-
-    @property
-    def created_at(self):
-        return self.created_at_raw.replace(tzinfo=datetime.timezone.utc)
 
 
 class MeetupParticipant(db.Model):

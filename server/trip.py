@@ -468,13 +468,13 @@ def create_meeting(trip_id):
 
     if not title or not scheduled_time_str:
         flash("Mandatory fields are missing", "error")
-        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+        return redirect(url_for("trip.create_meeting", trip_id=trip.id))
 
     try:
         scheduled_time = datetime.datetime.fromisoformat(scheduled_time_str)
     except ValueError:
         flash("Invalid date and time format.", "error")
-        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+        return redirect(url_for("trip.create_meeting", trip_id=trip.id))
 
     new_meeting = model.Meetup(
         proposal_id=trip.id,
