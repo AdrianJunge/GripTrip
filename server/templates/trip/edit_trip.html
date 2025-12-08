@@ -57,6 +57,7 @@
         <div class="card card-body collapse" id="optionalCollapse">
 
             <div class="mb-3">
+                <label class="form-label">Destination Sites</label>
                 <div class="d-flex gap-2">
                     <input name="destinations" class="form-control tagify {% if trip.is_final('destinations') %}opacity-50{% endif %}" placeholder="Add destinations" value="{{ trip.destinations|join(',') if trip.destinations else '' }}" {% if trip.is_final('destinations') %}readonly{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('destinations') else 'success' }} btn-sm toggle-final-btn" data-field="destinations" data-action="{{ 'unfinalize' if trip.is_final('destinations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('destinations') else 'Finalize' }}</button>
@@ -65,6 +66,7 @@
             </div>
 
             <div class="mb-3 mv-dates-widget" data-finalized="{{ 'true' if trip.is_final('dates') else 'false' }}">
+                <label class="form-label">Date ranges</label>
                 <div class="d-flex gap-2 mb-2">
                     <input type="date" class="form-control mv-start {% if trip.is_final('dates') %}opacity-50{% endif %}" placeholder="Start date" value="{%- if trip.dates and trip.dates|length > 0 %}{{ trip.dates[0][0] }}{%- endif %}" {% if trip.is_final('dates') %}readonly{% endif %}>
                     <input type="date" class="form-control mv-end {% if trip.is_final('dates') %}opacity-50{% endif %}" placeholder="End date" value="{%- if trip.dates and trip.dates|length > 0 %}{{ trip.dates[0][1] }}{%- endif %}" {% if trip.is_final('dates') %}readonly{% endif %}>
@@ -110,6 +112,7 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Activities</label>
                 <div class="d-flex gap-2">
                     <input name="activity" class="form-control tagify {% if trip.is_final('activities') %}opacity-50{% endif %}" placeholder="Add activities" value="{{ trip.activities|join(',') if trip.activities else '' }}" {% if trip.is_final('activities') %}readonly{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('activities') else 'success' }} btn-sm toggle-final-btn" data-field="activities" data-action="{{ 'unfinalize' if trip.is_final('activities') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('activities') else 'Finalize' }}</button>
@@ -118,6 +121,7 @@
             </div>
 
             <div class="mb-3">
+                <label class="form-label">Departure locations</label>
                 <div class="d-flex gap-2">
                     <input name="departure_location" class="form-control tagify {% if trip.is_final('departure_locations') %}opacity-50{% endif %}" placeholder="Add departure locations" value="{{ trip.departure_locations|join(',') if trip.departure_locations else '' }}" {% if trip.is_final('departure_locations') %}readonly{% endif %}>
                     <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('departure_locations') else 'success' }} btn-sm toggle-final-btn" data-field="departure_locations" data-action="{{ 'unfinalize' if trip.is_final('departure_locations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('departure_locations') else 'Finalize' }}</button>
