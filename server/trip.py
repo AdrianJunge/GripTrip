@@ -43,10 +43,9 @@ def fetch_coordinates_for_destination(destination):
 
 def set_details_from_request(trip_proposal):
     destinations = json.loads(request.form.get("destinations")) if request.form.get("destinations") else []
-    activities = json.loads(request.form.get("activity")) if request.form.get("activity") else []
+    gear_needed = json.loads(request.form.get("gear_needed")) if request.form.get("gear_needed") else []
+    difficulty = json.loads(request.form.get("difficulty")) if request.form.get("difficulty") else []
 
-    # set departure thingy
-    departure_locations = json.loads(request.form.get("departure_location")) if request.form.get("departure_location") else []
     start_dates = request.form.getlist("start_date") or []
     end_dates = request.form.getlist("end_date") or []
     dates = [[s, e] for s, e in zip(start_dates, end_dates)] if start_dates and end_dates else []
@@ -66,10 +65,10 @@ def set_details_from_request(trip_proposal):
             trip_proposal.accommodation = accommodation
         if trip_proposal.transportation != transportation:
             trip_proposal.transportation = transportation
-        if trip_proposal.activities != activities:
-            trip_proposal.activities = activities
-        if trip_proposal.departure_locations != departure_locations:
-            trip_proposal.departure_locations = departure_locations
+        if trip_proposal.gear_needed != gear_needed:
+            trip_proposal.gear_needed = gear_needed
+        if trip_proposal.difficulty != difficulty:
+            trip_proposal.difficulty = difficulty
         if trip_proposal.dates != dates:
             trip_proposal.dates = dates
         
@@ -141,10 +140,10 @@ def edit_trip(trip_id):
     required_fields = [
         'destinations',
         'dates',
-        'activities',
+        'gear_needed',
+        'difficulty',
         'accommodation',
         'transportation',
-        'departure_locations',
         'budget',
     ]
     all_final = all(trip.is_final(f) for f in required_fields)
@@ -468,13 +467,13 @@ def create_meeting(trip_id):
 
     if not title or not scheduled_time_str:
         flash("Mandatory fields are missing", "error")
-        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+        return redirect(url_for("trip.create_meeting", trip_id=trip.id))
 
     try:
         scheduled_time = datetime.datetime.fromisoformat(scheduled_time_str)
     except ValueError:
         flash("Invalid date and time format.", "error")
-        return redirect(url_for("trip.view_trip", trip_id=trip.id))
+        return redirect(url_for("trip.create_meeting", trip_id=trip.id))
 
     new_meeting = model.Meetup(
         proposal_id=trip.id,

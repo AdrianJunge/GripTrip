@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
     document.querySelectorAll('.toggle-final-btn').forEach(function(btn){
         btn.addEventListener('click', function(){
             const field = btn.getAttribute('data-field');
@@ -6,7 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.disabled = true;
             fetch(window.location.pathname, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken,
+                },
                 body: new URLSearchParams({ toggle_final: field, toggle_action: action })
             }).then(function(resp){
                 if (resp.ok) {
