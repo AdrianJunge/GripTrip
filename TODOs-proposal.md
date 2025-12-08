@@ -129,10 +129,6 @@
 # More
 - [ ] Fix search term hiding/showing markers on map
 - [ ] Finalize `README.md`
-- [ ] Climbing related field (remove activities field)
-    - [ ] Level of difficulty
-    - [ ] Climbing gear needed
-    - [ ] Specific climbing location (e.g. mountain or gym)
 
 # Requirements
 - [x] developed in Python with Flask

@@ -83,8 +83,9 @@ class Proposal(db.Model):
     dates: Mapped[List[Tuple[datetime.datetime, datetime.datetime]]] = mapped_column(JSON, default=list, nullable=True)
     destinations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
     
-    departure_locations: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
-    activities: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    gear_needed: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    difficulty: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=True)
+    
 
     finalized_flags: Mapped[dict] = mapped_column(
         MutableDict.as_mutable(JSON),
@@ -113,7 +114,7 @@ class Proposal(db.Model):
     def unfinalize(self, field_name: str):
         self.finalized_flags.pop(field_name, None)
 
-    @validates("dates", "budget", "accommodation", "transportation", "activities", "departure_locations", "destinations")
+    @validates("dates", "budget", "accommodation", "transportation", "gear_needed", "destinations", "difficulty")
     def _validate_attributes(self, key, value):
         if self.is_final(key) and value != getattr(self, key):
             raise FinalizedError(f"Field '{key}' is finalized and cannot be modified.")
@@ -152,7 +153,7 @@ class Proposal(db.Model):
         if key == "transportation":
             pass
 
-        if key == "activities" or key == "destinations" or key == "departure_locations":
+        if key == "gear_needed" or key == "destinations" or key == "difficulty":
             if not isinstance(value, list):
                 raise ValueError("Must be a list of strings.")
 

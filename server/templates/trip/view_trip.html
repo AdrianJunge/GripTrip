@@ -103,9 +103,9 @@
 
             <div class="mb-3">
                 <h6 class="d-flex justify-content-between align-items-center">
-                    <span>Activities</span>
+                    <span>Gear needed</span>
                     <small>
-                        {% if trip.is_final('activities') %}
+                        {% if trip.is_final('gear_needed') %}
                             <span class="badge bg-success" title="Final">✓</span>
                         {% else %}
                             <span class="badge bg-info" title="Not final">open</span>
@@ -113,12 +113,34 @@
                     </small>
                 </h6>
                 <div>
-                    {% if trip.activities %}
-                        {% for a in trip.activities %}
+                    {% if trip.gear_needed %}
+                        {% for a in trip.gear_needed %}
                             <span class="badge bg-secondary">{{ a }}</span>
                         {% endfor %}
                     {% else %}
-                        <div class="text-muted">No activities</div>
+                        <div class="text-muted">No gear needed</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <h6 class="d-flex justify-content-between align-items-center">
+                    <span>Climbing Difficulty</span>
+                    <small>
+                        {% if trip.is_final('difficulty') %}
+                            <span class="badge bg-success" title="Final">✓</span>
+                        {% else %}
+                            <span class="badge bg-info" title="Not final">open</span>
+                        {% endif %}
+                    </small>
+                </h6>
+                <div>
+                    {% if trip.difficulty %}
+                        {% for d in trip.difficulty %}
+                            <span class="badge bg-warning text-dark">{{ d }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-muted">No difficulty specified</div>
                     {% endif %}
                 </div>
             </div>
@@ -194,28 +216,6 @@
                             <div>{{ trip.transportation }}</div>
                         {% else %}
                             <div class="text-muted">No transportation set</div>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <h6 class="d-flex justify-content-between align-items-center">
-                        <span>Departure locations</span>
-                        <small>
-                            {% if trip.is_final('departure_locations') %}
-                                <span class="badge bg-success" title="Final">✓</span>
-                            {% else %}
-                                <span class="badge bg-info" title="Not final">open</span>
-                            {% endif %}
-                        </small>
-                    </h6>
-                    <div>
-                        {% if trip.departure_locations %}
-                            {% for d in trip.departure_locations %}
-                                <span class="badge bg-secondary">{{ d }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <div class="text-muted">No departure locations</div>
                         {% endif %}
                     </div>
                 </div>
