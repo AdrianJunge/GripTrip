@@ -28,8 +28,10 @@ It is possible to reply to messages in the trip dashboard, showing the original 
 ### Testing
 The `init_db.py` file adds some predefined users and trips to the application.
 Example users:
-- username: a@a | password: a
-- username: mary@mary | password: a
+- username: a@a         |   password: a
+- username: mary@mary   |   password: a
+The index page shows a map with the trips marking their primary location.
+By scrolling down at the dashboard of the page you will see trip cards for each single trip.
 
 ### Declaration of use of AI
 **Github copilot:**
