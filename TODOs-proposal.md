@@ -127,8 +127,6 @@
     - remarkable appearance at level of current standards for professional applications
 
 # More
-- [ ] CSS
-    - [ ] Footer in create trip
 - [ ] Fix search term hiding/showing markers on map
 - [ ] Finalize `README.md`
 
