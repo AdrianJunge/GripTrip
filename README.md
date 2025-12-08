@@ -6,9 +6,9 @@ Both need and use `python3 -m venv`.
 
 ## Information
 ### Author names
-- Adrian Junge | XXXXXX
-- Liam van Doorn | 100575986
-- Sam Parkin | 100577769
+- Adrian Junge      |   100574899
+- Liam van Doorn    |   100575986
+- Sam Parkin        |   100577769
 
 ### Additional functionality to get evaluated
 - **UI/UX design**

@@ -127,6 +127,10 @@
     - remarkable appearance at level of current standards for professional applications
 
 # More
+- [ ] CSS
+    - [ ] Search Bar vanishing makes header bar smaller
+    - [ ] Footer in create trip
+    - [ ] Save/Cancel buttons in edit trip
 - [ ] Fix search term hiding/showing markers on map
 - [ ] Finalize `README.md`
 
