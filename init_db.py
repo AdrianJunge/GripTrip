@@ -2,6 +2,7 @@
 import datetime
 from server import create_app, db, model
 from server.model import Message, Proposal, ProposalParticipant, ProposalParticipantRole, User
+from server.trip import set_destination_coordinates
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash
 
@@ -37,8 +38,9 @@ def init_database():
             user=testuser,
             title="Test Trip",
             max_participants=5,
-            destinations=["New York", "Los Angeles", "Chicago"],
+            destinations=["Las Vegas", "New York", "Los Angeles", "Chicago"],
         )
+        set_destination_coordinates(testuser_trip)
 
         testuser_participant = ProposalParticipant(
             user=testuser,
@@ -57,8 +59,9 @@ def init_database():
             user=mary,
             title="Mary's Trip",
             max_participants=3,
-            destinations=["Paris", "London", "Berlin"],
+            destinations=["Las Vegas", "Paris", "London", "Berlin"],
         )
+        set_destination_coordinates(another_trip)
         mary_participant_another_trip = ProposalParticipant(
             user=mary,
             proposal=another_trip,

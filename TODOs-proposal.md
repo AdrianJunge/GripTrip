@@ -132,6 +132,9 @@
     => remove followers stuff
 - [ ] Fix search term hiding/showing markers on map
 - [ ] Finalize `README.md`
+- [ ] Climbing related field
+    - [ ] Difficulty
+    - [ ] Gear needed
 
 # Requirements
 - [x] developed in Python with Flask

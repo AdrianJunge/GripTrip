@@ -33,8 +33,6 @@ def fetch_coordinates_for_destination(destination):
         response.raise_for_status()
         data = response.json()
 
-        print(f"DATA FETCHED : {data}", flush=True)
-
         if data:
             lat = float(data[0]["lat"])
             lon = float(data[0]["lon"])
