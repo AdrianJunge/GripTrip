@@ -15,12 +15,15 @@ Both need and use `python3 -m venv`.
 There's a base main view containing the most frequent functionality of the application, such as handling, searching and seeing active trips. 
 Other less frequently used functionality is shown in the navbar such as user info etc.
 
-- **trip map**
+- **Trip map**
 The dashboard contains a leaflet map that gets populated for each authorized trip the user can view. 
 The leaflet map contains icons that can be hovered to show the trips associated to it. 
 
-- **async update of trip user roles**
-Uses 
+- **Async update of trip user roles**
+By using the JS fetch API user roles can be updated without a page reload.
+
+- **Reply to messages**
+It is possible to reply to messages in the trip dashboard, showing the original message above the response.
 
 ### Testing
 The `init_db.py` file adds some predefined users and trips to the application.
