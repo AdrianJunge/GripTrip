@@ -60,7 +60,7 @@
                 <label class="form-label">Destination Sites</label>
                 <div class="d-flex gap-2">
                     <input name="destinations" class="form-control tagify {% if trip.is_final('destinations') %}opacity-50{% endif %}" placeholder="Add destinations" value="{{ trip.destinations|join(',') if trip.destinations else '' }}" {% if trip.is_final('destinations') %}readonly{% endif %}>
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('destinations') else 'success' }} btn-sm toggle-final-btn" data-field="destinations" data-action="{{ 'unfinalize' if trip.is_final('destinations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('destinations') else 'Finalize' }}</button>
+                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('destinations') else 'success' }} toggle-final-btn" data-field="destinations" data-action="{{ 'unfinalize' if trip.is_final('destinations') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('destinations') else 'Finalize' }}</button>
                 </div>
                 <div class="form-text">Press enter or comma to add multiple destinations.</div>
             </div>
@@ -71,7 +71,7 @@
                     <input type="date" class="form-control mv-start {% if trip.is_final('dates') %}opacity-50{% endif %}" placeholder="Start date" value="{%- if trip.dates and trip.dates|length > 0 %}{{ trip.dates[0][0] }}{%- endif %}" {% if trip.is_final('dates') %}readonly{% endif %}>
                     <input type="date" class="form-control mv-end {% if trip.is_final('dates') %}opacity-50{% endif %}" placeholder="End date" value="{%- if trip.dates and trip.dates|length > 0 %}{{ trip.dates[0][1] }}{%- endif %}" {% if trip.is_final('dates') %}readonly{% endif %}>
                     <button type="button" class="btn btn-outline-secondary mv-add" {% if trip.is_final('dates') %}disabled{% endif %}>Add range</button>
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('dates') else 'success' }} btn-sm toggle-final-btn" data-field="dates" data-action="{{ 'unfinalize' if trip.is_final('dates') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('dates') else 'Finalize' }}</button>
+                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('dates') else 'success' }} toggle-final-btn" data-field="dates" data-action="{{ 'unfinalize' if trip.is_final('dates') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('dates') else 'Finalize' }}</button>
                 </div>
                 <div class="mv-list">
                     {%- for s,e in trip.dates %}
@@ -81,41 +81,35 @@
                 </div>
             </div>
 
-            <div class="mb-3 d-flex align-items-start gap-2">
+            <div class="mb-3 d-flex align-items-end gap-2">
                 <div class="flex-grow-1">
                     <label for="budget" class="form-label">Budget</label>
                     <input type="number" class="form-control {% if trip.is_final('budget') %}opacity-50{% endif %}" id="budget" name="budget" value="{{ trip.budget or '' }}" {% if trip.is_final('budget') %}readonly{% endif %} min="0" step="0.01">
                 </div>
-                <div class="mt-4">
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('budget') else 'success' }} btn-sm toggle-final-btn" data-field="budget" data-action="{{ 'unfinalize' if trip.is_final('budget') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('budget') else 'Finalize' }}</button>
-                </div>
+                <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('budget') else 'success' }} toggle-final-btn" data-field="budget" data-action="{{ 'unfinalize' if trip.is_final('budget') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('budget') else 'Finalize' }}</button>
             </div>
 
-            <div class="mb-3 d-flex align-items-start gap-2">
+            <div class="mb-3 d-flex align-items-end gap-2">
                 <div class="flex-grow-1">
                     <label for="accommodation" class="form-label">Accommodation</label>
                     <input type="text" class="form-control {% if trip.is_final('accommodation') %}opacity-50{% endif %}" id="accommodation" name="accommodation" value="{{ trip.accommodation or '' }}" {% if trip.is_final('accommodation') %}readonly{% endif %}>
                 </div>
-                <div class="mt-4">
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('accommodation') else 'success' }} btn-sm toggle-final-btn" data-field="accommodation" data-action="{{ 'unfinalize' if trip.is_final('accommodation') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('accommodation') else 'Finalize' }}</button>
-                </div>
+                <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('accommodation') else 'success' }} toggle-final-btn" data-field="accommodation" data-action="{{ 'unfinalize' if trip.is_final('accommodation') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('accommodation') else 'Finalize' }}</button>
             </div>
 
-            <div class="mb-3 d-flex align-items-start gap-2">
+            <div class="mb-3 d-flex align-items-end gap-2">
                 <div class="flex-grow-1">
                     <label for="transportation" class="form-label">Transportation</label>
                     <input type="text" class="form-control {% if trip.is_final('transportation') %}opacity-50{% endif %}" id="transportation" name="transportation" value="{{ trip.transportation or '' }}" {% if trip.is_final('transportation') %}readonly{% endif %}>
                 </div>
-                <div class="mt-4">
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('transportation') else 'success' }} btn-sm toggle-final-btn" data-field="transportation" data-action="{{ 'unfinalize' if trip.is_final('transportation') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('transportation') else 'Finalize' }}</button>
-                </div>
+                <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('transportation') else 'success' }} toggle-final-btn" data-field="transportation" data-action="{{ 'unfinalize' if trip.is_final('transportation') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('transportation') else 'Finalize' }}</button>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Gear needed</label>
                 <div class="d-flex gap-2">
                     <input name="gear_needed" class="form-control tagify {% if trip.is_final('gear_needed') %}opacity-50{% endif %}" placeholder="Add gear needed" value="{{ trip.gear_needed|join(',') if trip.gear_needed else '' }}" {% if trip.is_final('gear_needed') %}readonly{% endif %}>
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('gear_needed') else 'success' }} btn-sm toggle-final-btn" data-field="gear_needed" data-action="{{ 'unfinalize' if trip.is_final('gear_needed') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('gear_needed') else 'Finalize' }}</button>
+                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('gear_needed') else 'success' }} toggle-final-btn" data-field="gear_needed" data-action="{{ 'unfinalize' if trip.is_final('gear_needed') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('gear_needed') else 'Finalize' }}</button>
                 </div>
                 <div class="form-text">Press enter or comma to add multiple gear needed</div>
             </div>
@@ -124,7 +118,7 @@
                 <label class="form-label">Climbing Difficulty</label>
                 <div class="d-flex gap-2">
                     <input name="difficulty" class="form-control tagify {% if trip.is_final('difficulty') %}opacity-50{% endif %}" placeholder="Add difficulty grades (e.g., 5.10a, V4)" value="{{ trip.difficulty|join(',') if trip.difficulty else '' }}" {% if trip.is_final('difficulty') %}readonly{% endif %}>
-                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('difficulty') else 'success' }} btn-sm toggle-final-btn" data-field="difficulty" data-action="{{ 'unfinalize' if trip.is_final('difficulty') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('difficulty') else 'Finalize' }}</button>
+                    <button type="button" class="btn btn-outline-{{ 'danger' if trip.is_final('difficulty') else 'success' }} toggle-final-btn" data-field="difficulty" data-action="{{ 'unfinalize' if trip.is_final('difficulty') else 'finalize' }}">{{ 'Unfinalize' if trip.is_final('difficulty') else 'Finalize' }}</button>
                 </div>
                 <div class="form-text">Press enter or comma to add multiple difficulty grades</div>
             </div>
